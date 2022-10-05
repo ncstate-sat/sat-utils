@@ -4,6 +4,7 @@ This repository contains a collection of shared utility functions.
 
 - AuthChecker: A class that checks if a user has the specified role in their JWT payload
 ([view usage](https://github.ncsu.edu/SAT/csgold-proxy/blob/059191b16890db2679c93e19883cad4a482741ca/app.py#L36))
+- Slack: A class to upload files to our Slack workspace
 
 ## Usage
 
