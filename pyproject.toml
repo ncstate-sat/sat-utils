@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "sat-utils"
-version = "1.0.0"
+version = "1.0.1"
 authors = [
   { name="Ryan Semmler", email="rsemmle@ncsu.edu" },
 ]
@@ -12,7 +12,7 @@ description = "Contains a collection of shared utility functions"
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.6"
-dependencies = [ "fastapi", "jwt" ]
+dependencies = [ "fastapi", "jwt", "slack-sdk" ]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
@@ -20,6 +20,7 @@ classifiers = [
 
 [project.entry-points."sat_utils.auth_checker"]
 "sat_utils.auth_checker" = "sat_utils.auth_checker:AuthChecker"
+"sat_utils.slack" = "sat_utils.slack:Slack"
 
 [project.urls]
 "Homepage" = "https://github.ncsu.edu/SAT/sat-utils"
