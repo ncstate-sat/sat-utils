@@ -9,7 +9,7 @@ Please ensure they are set as par of the deployment as either environment variab
 | ----------- | ----------- |
 | PASSWORDSTATE_API_URL | The url for the password state server. Defaults to https://password.ehps.ncsu.edu |
 | PASSWORDSTATE_API_KEY | The APIkey token used for authentication. Defined for each list at by the password state administrator. |
-| PASSWORDSTATE_LIST_ID | The ID of hte list to search for your desired password |
+| PASSWORDSTATE_LIST_ID | The ID of the list to search for your desired password |
 
 ### Common Password Related Errors
 
