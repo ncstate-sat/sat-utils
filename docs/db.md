@@ -19,3 +19,10 @@ Exception has occurred: KeyError
 ```
 
 You haven't specified the PASSWORDSTATE_LIST_ID environment variable.
+
+```
+Exception has occurred: KeyError
+'PASSWORDSTATE_API_KEY'
+```
+
+You haven't specified the PASSWORDSTATE_API_KEY environment variable.
