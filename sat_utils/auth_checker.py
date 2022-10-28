@@ -1,5 +1,5 @@
 import os
-from fastapi import Header, HTTPException
+from fastapi import Header, HTTPException, Depends
 import jwt
 
 
@@ -59,3 +59,16 @@ class AuthChecker:
             # Throw a 403 if the authorization isn't there or is set to False:
             if user_authorizations.get(required_auth, False) is False:
                 raise HTTPException(403, detail="User not authorized")
+
+
+def require_auths(*required_authorizations):
+    """
+    Wrapper to simplify the syntax for using AuthChecker
+    `require_auths("service-read")`
+    is equivalent to
+    `Depends(AuthChecker("service-read"))`
+
+    :param required_authorizations: any number of authorizations
+                                    required to access the endpoint
+    """
+    return Depends(AuthChecker(*required_authorizations))
