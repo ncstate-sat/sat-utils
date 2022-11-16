@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "sat-utils"
-version = "1.0.4"
+version = "1.0.5"
 authors = [
   { name="Ryan Semmler", email="rsemmle@ncsu.edu" },
 ]
@@ -16,7 +16,7 @@ dependencies = [
   "fastapi",
   "PyJWT",
   "slack-sdk",
-  "pyodc",
+  "pyodbc",
   "cx-Oracle",
   "mysql-connector-python",
   "requests"
