@@ -1,12 +1,13 @@
 import os
-from fastapi import Header, HTTPException, Depends
+from fastapi import Header, HTTPException
 import jwt
 
 
 class AuthChecker:
     """
-    AuthChecker objects will ensure that the user is authorized to
-    access a given route, using the jwt token in the request header.
+    AuthChecker ensures that the user is authorized to access a given route
+    when added to the route's dependencies, using the jwt token
+    in the request header.
     An HTTP Exception is raised if the user is not authorized.
     """
 
@@ -52,23 +53,10 @@ class AuthChecker:
             raise HTTPException(400, detail="Token is expired")
 
         user_authorizations = payload.get("authorizations", {})
-        if "root" in user_authorizations:
+        if user_authorizations.get("root") is True:
             # Then the user is authorized. Continue without any exceptions.
             return
         for required_auth in self.required_authorizations:
             # Throw a 403 if the authorization isn't there or is set to False:
             if user_authorizations.get(required_auth, False) is False:
                 raise HTTPException(403, detail="User not authorized")
-
-
-def require_auths(*required_authorizations):
-    """
-    Wrapper to simplify the syntax for using AuthChecker
-    `require_auths("service-read")`
-    is equivalent to
-    `Depends(AuthChecker("service-read"))`
-
-    :param required_authorizations: any number of authorizations
-                                    required to access the endpoint
-    """
-    return Depends(AuthChecker(*required_authorizations))
