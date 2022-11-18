@@ -13,13 +13,12 @@ class AuthChecker:
 
     def __init__(self, *required_authorizations):
         """
-        :param tuple required_authorizations: Each item in the tuple
-            is a string with the title of an authorization required
-            by the function.
+        :param strings required_authorizations: Each string given is the
+        title of an authorization required by the function.
         """
         self.required_authorizations = required_authorizations
 
-    def __call__(self, authorization=Header()):
+    def __call__(self, authorization=Header(default="")):
         """
         When an AuthChecker object is called, get the 'Authorization'
         header from the request and check the user's permissions from the jwt.
