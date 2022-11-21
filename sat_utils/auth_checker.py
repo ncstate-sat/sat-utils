@@ -1,3 +1,5 @@
+"""Contains the AuthChecker class, verifying user authorizations"""
+
 import os
 from fastapi import Header, HTTPException
 import jwt
@@ -5,7 +7,7 @@ import jwt
 
 class AuthChecker:
     """
-    AuthChecker ensures that the user is authorized to access a given route
+    AuthChecker verifies that the user is authorized to access a given route
     when added to the route's dependencies, using the jwt token
     in the request header.
     An HTTP Exception is raised if the user is not authorized.
@@ -31,11 +33,14 @@ class AuthChecker:
         Throw HTTP Exception if the user doesn't have all of the function's
         required authorizations.
         :param str authorization_header: the request's Authorization header.
-            The header is an encoded JWT.
+            The header value is a JWT.
         """
         token = authorization_header.lstrip("Bearer").strip()
         if not token:
-            raise HTTPException(401, detail="No token provided")
+            raise HTTPException(
+                401,
+                detail="No token provided in 'Authorization' header"
+            )
         try:
             secret = os.getenv("JWT_SECRET")
             if not secret:
@@ -43,11 +48,7 @@ class AuthChecker:
                     400,
                     detail="No environment variable JWT_SECRET found"
                 )
-            payload = jwt.decode(
-                token,
-                secret,
-                algorithms=["HS256"]
-            )
+            payload = jwt.decode(token, secret, algorithms=["HS256"])
         except jwt.exceptions.ExpiredSignatureError:
             raise HTTPException(400, detail="Token is expired")
 

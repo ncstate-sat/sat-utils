@@ -104,10 +104,17 @@ def test_no_token_provided():
     assert "Success" not in response.text
 
 
+def test_no_header_provided():
+    """User should get a 401 if no header is provided."""
+    response = client.get("/1")
+    assert response.status_code == 401
+    assert "Success" not in response.text
+
+
 def test_unauthorized_requirement():
     """
     User can't access a route with a required auth set to False.
-    Root user still can.
+    Root user can still access the route.
     """
     response = client.get("/13",
                           headers={"Authorization": "Bearer " + USER_JWT})
