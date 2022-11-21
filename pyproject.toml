@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "sat-utils"
-version = "1.0.5"
+version = "1.1.0"
 authors = [
   { name="Ryan Semmler", email="rsemmle@ncsu.edu" },
 ]
@@ -19,7 +19,8 @@ dependencies = [
   "pyodbc",
   "cx-Oracle",
   "mysql-connector-python",
-  "requests"
+  "requests",
+  "pytest"
 ]
 classifiers = [
     "Programming Language :: Python :: 3",

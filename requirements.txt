@@ -5,5 +5,4 @@ pyodbc
 mysql-connector-python
 requests
 slack-sdk
-uvicorn
 pytest
