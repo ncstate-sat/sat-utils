@@ -1,0 +1,25 @@
+name: Unit Tests
+
+on:
+    pull_request:
+        branches: [master, main]
+
+jobs:
+    test:
+        name: Run unit tests
+        runs-on: sat-hosted
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Build Docker image
+              run: docker build -t unit-test .
+
+            - name: Run pytest inside Docker
+              run: |
+                  docker run --rm \
+                    --entrypoint '/bin/bash' \
+                    unit-test \
+                    -c 'python3 -m pip install -r requirements.txt && \
+                      python3 -m pytest'

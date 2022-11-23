@@ -1,0 +1,8 @@
+fastapi
+pyjwt
+cx_Oracle
+pyodbc
+mysql-connector-python
+requests
+slack-sdk
+pytest
