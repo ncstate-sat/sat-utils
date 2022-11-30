@@ -104,7 +104,7 @@ def test_expired_token():
 
 
 def test_invalid_signature_token():
-    """bluh"""
+    """User can't access a route using the wrong JWT_SECRET"""
     response = client.get(
         "/1", headers={"Authorization": "Bearer " + INVALID_SIGNATURE_JWT}
     )
