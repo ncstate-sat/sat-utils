@@ -51,6 +51,9 @@ class AuthChecker:
             payload = jwt.decode(token, secret, algorithms=["HS256"])
         except jwt.exceptions.ExpiredSignatureError:
             raise HTTPException(400, detail="Token is expired")
+        except jwt.exceptions.InvalidSignatureError:
+            raise HTTPException(400, detail=("Token has an invalid signature. "
+                                             "Check the JWT_SECRET variable."))
 
         user_authorizations = payload.get("authorizations", {})
         if user_authorizations.get("root") is True:
@@ -59,4 +62,7 @@ class AuthChecker:
         for required_auth in self.required_authorizations:
             # Throw a 403 if the authorization isn't there or is set to False:
             if user_authorizations.get(required_auth, False) is False:
-                raise HTTPException(403, detail="User not authorized")
+                raise HTTPException(
+                    403,
+                    detail=f"{required_auth} authorization is required."
+                )
