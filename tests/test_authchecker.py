@@ -49,13 +49,6 @@ client = TestClient(app_to_test)
 os.environ["JWT_SECRET"] = "TEST_SECRET"
 
 # all tokens have auth1: True, auth2: True, auth3: False
-EXPIRED_JWT = (
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MDU2NzMsImVtYWlsIj"
-    "oibG1lbmFAbmNzdS5lZHUiLCJjYW1wdXNfaWQiOiIwMDExMzI4MDgiLCJyb2xlcyI6WyJ0Z"
-    "XN0X3VzZXIiXSwiYXV0aG9yaXphdGlvbnMiOnsiYXV0aDEiOnRydWUsImF1dGgyIjp0cnVl"
-    "LCJhdXRoMyI6ZmFsc2UsIl9yZWFkIjpbXSwiX3dyaXRlIjpbXX19.UmLWB6Pf-hwQaHBdrg"
-    "Iq662_H1ZwAT1fWBzL1sfApIo"
-)
 USER_JWT = (
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQxOTQ4ODA3LCJlbWFpbC"
     "I6ImxtZW5hQG5jc3UuZWR1IiwiY2FtcHVzX2lkIjoiMDAxMTMyODA4Iiwicm9sZXMiOlsid"
@@ -69,6 +62,20 @@ ROOT_JWT = (
     "GVzdF91c2VyIl0sImF1dGhvcml6YXRpb25zIjp7ImF1dGgxIjp0cnVlLCJhdXRoMiI6dHJ1"
     "ZSwiYXV0aDMiOmZhbHNlLCJyb290Ijp0cnVlLCJfcmVhZCI6W10sIl93cml0ZSI6W119fQ."
     "8R2uFboSK7FiHtuw8If94pgoNdiWRHuj-yPsl-8sV1U"
+)
+EXPIRED_JWT = (
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Njg3MDU2NzMsImVtYWlsIj"
+    "oibG1lbmFAbmNzdS5lZHUiLCJjYW1wdXNfaWQiOiIwMDExMzI4MDgiLCJyb2xlcyI6WyJ0Z"
+    "XN0X3VzZXIiXSwiYXV0aG9yaXphdGlvbnMiOnsiYXV0aDEiOnRydWUsImF1dGgyIjp0cnVl"
+    "LCJhdXRoMyI6ZmFsc2UsIl9yZWFkIjpbXSwiX3dyaXRlIjpbXX19.UmLWB6Pf-hwQaHBdrg"
+    "Iq662_H1ZwAT1fWBzL1sfApIo"
+)
+INVALID_SIGNATURE_JWT = (
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQwOTk3Mzc4MDAsImVtYWlsIj"
+    "oibG1lbmFAbmNzdS5lZHUiLCJjYW1wdXNfaWQiOiIwMDExMzI4MDgiLCJyb2xlcyI6WyJ0Z"
+    "XN0X3VzZXIiXSwiYXV0aG9yaXphdGlvbnMiOnsiYXV0aDEiOnRydWUsImF1dGgyIjp0cnVl"
+    "LCJhdXRoMyI6ZmFsc2UsInJvb3QiOnRydWUsIl9yZWFkIjpbXSwiX3dyaXRlIjpbXX19.qo"
+    "4DfBZaP-rHptkcwNqh4Lcmhn14ClJ4NK1sKC499pY"
 )
 
 
@@ -92,6 +99,15 @@ def test_expired_token():
     """User can't access a route with an expired token"""
     response = client.get("/1",
                           headers={"Authorization": "Bearer " + EXPIRED_JWT})
+    assert response.status_code == 400
+    assert "Success" not in response.text
+
+
+def test_invalid_signature_token():
+    """User can't access a route using the wrong JWT_SECRET"""
+    response = client.get(
+        "/1", headers={"Authorization": "Bearer " + INVALID_SIGNATURE_JWT}
+    )
     assert response.status_code == 400
     assert "Success" not in response.text
 
