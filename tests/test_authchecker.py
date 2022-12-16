@@ -99,7 +99,7 @@ def test_expired_token():
     """User can't access a route with an expired token"""
     response = client.get("/1",
                           headers={"Authorization": "Bearer " + EXPIRED_JWT})
-    assert response.status_code == 400
+    assert response.status_code == 401
     assert "Success" not in response.text
 
 

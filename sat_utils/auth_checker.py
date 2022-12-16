@@ -50,7 +50,7 @@ class AuthChecker:
                 )
             payload = jwt.decode(token, secret, algorithms=["HS256"])
         except jwt.exceptions.ExpiredSignatureError:
-            raise HTTPException(400, detail="Token is expired")
+            raise HTTPException(401, detail="Token is expired")
         except jwt.exceptions.InvalidSignatureError:
             raise HTTPException(400, detail=("Token has an invalid signature. "
                                              "Check the JWT_SECRET variable."))
