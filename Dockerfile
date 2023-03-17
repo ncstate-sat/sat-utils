@@ -1,4 +1,4 @@
-FROM satregistry.ehps.ncsu.edu:7001/it/python-image:latest
+FROM satregistry.ehps.ncsu.edu/it/python-image:latest
 
 WORKDIR /utils
 
