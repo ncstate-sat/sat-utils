@@ -21,7 +21,8 @@ dependencies = [
   "cx-Oracle",
   "mysql-connector-python",
   "requests",
-  "pytest"
+  "pytest",
+  "ldap3"
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
