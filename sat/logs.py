@@ -10,8 +10,18 @@ class SATLogger:
         self.handler.setFormatter(self.formatter)
         self.logger.addHandler(self.handler)
 
-    def add_handlers(self, handlers: list[logging.Handler]) -> None:
-        for handler in handlers:
+    def add_handlers(self, handlers: list[(logging.Handler, logging.Formatter)]) -> None:
+        """
+        Add additional handlers to the logger.
+        Handlers should be a list of tuples with a logging.Handler and an
+        optional logging.Formatter.
+        """
+        for tup in handlers:
+            handler, formatter = tup
+            if formatter:
+                handler.setFormatter(formatter)
+            else:
+                handler.setFormatter(self.formatter)
             self.logger.addHandler(handler)
 
     def debug(self, msg: str) -> None:
