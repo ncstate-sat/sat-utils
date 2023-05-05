@@ -3,7 +3,8 @@ from slack_sdk import WebClient
 
 class Slack:
     """
-    Upload files directly to our Slack channels using this shared utility class.
+    Upload files directly to a Slack channel.
+    :param token: Slack API token
     """
 
     def __init__(self, token):
