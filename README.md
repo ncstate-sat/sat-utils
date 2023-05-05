@@ -35,3 +35,70 @@ logger = SATLogger(__name__)
 ...
 logger.info("Hello, world!")
 ```
+
+## Development
+
+### Setup
+
+Ensure you are in a virtual environment with Python 3.9.6 or higher.
+
+```shell
+> make setup
+```
+
+### Add dependencies
+
+#### Updating Requirements
+
+This project uses `pip-tools` to manage requirements. To update the requirements add your requirement
+to the `pyproject.toml` file.
+
+For dependencies required to run the app in production, add them to the `pyproject.toml` file under the `[project]` section.
+
+```toml
+[project]
+...
+dependencies = [
+    "fastapi>=0.95.1, <1.0.0",
+    "pyjwt>=2.6.0, <3.0.0",
+    "...",
+    "<YOUR NEW REQUIREMENT HERE>",
+    "...",
+]
+```
+
+For developer dependencies required or nice to have for development, add them to the `pyproject.toml` file under the `[project.optional-dependencies]` section.
+
+```toml
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.2.5, <7.0.0",
+    "...",
+    "<YOUR NEW DEV REQUIREMENT HERE>",
+    "...",
+]
+```
+
+When you have add the dependency run:
+
+```shell
+> make update-requirements
+```
+
+## Build and Publish
+
+Update the version in `pyproject.toml` before building.
+
+### Build
+
+```shell
+> flit build
+```
+
+### Publish
+
+As long as your PyPI credentials are set up correctly, you can publish to PyPI with the following command:
+
+```shell
+> flit publish
+```
