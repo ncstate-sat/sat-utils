@@ -20,5 +20,6 @@ jobs:
       - run: |
           python3 -m venv env
           source env/bin/activate
-          pip3 install pytest pytest-cov
+          pip install -r requirements/base/base.txt
+          pip install pytest pytest-cov
           pytest --cov
