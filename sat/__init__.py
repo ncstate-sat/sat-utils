@@ -1,4 +1,4 @@
-from sat_utils.db import (
+from sat.db import (
     get_ccure_db_conn,
     get_csprd_db_conn,
     get_diester_db_conn,
@@ -11,8 +11,8 @@ from sat_utils.db import (
     get_sims_db_conn,
     get_wos_connection,
 )
-from sat_utils.passwords import PasswordstateLookup
-from sat_utils.slack import Slack
+from sat.passwords import PasswordstateLookup
+from sat.slack import Slack
 
 __all__ = [
     "PasswordstateLookup",

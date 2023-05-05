@@ -2,6 +2,8 @@
 
 import requests
 
+TIMEOUT = 5
+
 
 class PasswordstateLookup:
     """
@@ -16,6 +18,7 @@ class PasswordstateLookup:
         """
         Exception raised when a password is not found
         """
+
         pass
 
     def get_pw_by_title(self, pw_list_id: str, title: str):
@@ -26,17 +29,13 @@ class PasswordstateLookup:
         :param str title: The title of the password to look up
         :returns str: The password from the passwordstate API
         """
-        url = (f"{self.api_base_url}/api/searchpasswords/"
-               f"{pw_list_id}"
-               f"?title={title}")
+        url = f"{self.api_base_url}/api/searchpasswords/" f"{pw_list_id}" f"?title={title}"
         headers = {"APIKey": self.api_secret}
-        response = requests.get(url, headers=headers).json()[0]
+        response = requests.get(url, headers=headers, timeout=TIMEOUT).json()[0]
         try:
             return response["Password"]
         except KeyError:
-            raise self.PasswordNotFoundError(
-                f"No password found with title {title}"
-            )
+            raise self.PasswordNotFoundError(f"No password found with title {title}")
 
     def get_login_by_title(self, pw_list_id: str, title: str):
         """
@@ -46,20 +45,16 @@ class PasswordstateLookup:
         :param str title: The title of the login to look up
         :returns dict: keys "username" and "password"
         """
-        url = (f"{self.api_base_url}/api/searchpasswords/"
-               f"{pw_list_id}"
-               f"?title={title}")
+        url = f"{self.api_base_url}/api/searchpasswords/" f"{pw_list_id}" f"?title={title}"
         headers = {"APIKey": self.api_secret}
-        response = requests.get(url, headers=headers).json()[0]
+        response = requests.get(url, headers=headers, timeout=TIMEOUT).json()[0]
         try:
             return {
                 "username": response["UserName"],
                 "password": response["Password"],
             }
         except KeyError:
-            raise self.PasswordNotFoundError(
-                f"No login found with title {title}"
-            )
+            raise self.PasswordNotFoundError(f"No login found with title {title}")
 
     def get_pw(self, pw_id):
         """
@@ -69,12 +64,10 @@ class PasswordstateLookup:
         """
         url = f"{self.api_base_url}/api/passwords/{pw_id}"
         headers = {"APIKey": self.api_secret}
-        response = requests.get(url, headers=headers).json()[0]
+        response = requests.get(url, headers=headers, timeout=TIMEOUT).json()[0]
         if "Password" in response:
             return response["Password"]
-        raise self.PasswordNotFoundError(
-            f"No password found with ID {pw_id}"
-        )
+        raise self.PasswordNotFoundError(f"No password found with ID {pw_id}")
 
     def get_login(self, pw_id):
         """
@@ -84,16 +77,14 @@ class PasswordstateLookup:
         """
         url = f"{self.api_base_url}/api/passwords/{pw_id}"
         headers = {"APIKey": self.api_secret}
-        response = requests.get(url, headers=headers).json()[0]
+        response = requests.get(url, headers=headers, timeout=TIMEOUT).json()[0]
         try:
             return {
                 "username": response["UserName"],
                 "password": response["Password"],
             }
         except KeyError:
-            raise self.PasswordNotFoundError(
-                f"No login found with ID {pw_id}"
-            )
+            raise self.PasswordNotFoundError(f"No login found with ID {pw_id}")
 
     def get_pw_list(self, pw_list_id):
         """
@@ -103,7 +94,7 @@ class PasswordstateLookup:
         """
         url = f"{self.api_base_url}/api/searchpasswords/{pw_list_id}"
         headers = {"APIKey": self.api_secret}
-        response = requests.get(url, headers=headers).json()
+        response = requests.get(url, headers=headers, timeout=TIMEOUT).json()
         try:
             return [
                 {
@@ -115,6 +106,4 @@ class PasswordstateLookup:
                 for item in response
             ]
         except KeyError:
-            raise self.PasswordNotFoundError(
-                f"No password list found with ID {pw_list_id}"
-            )
+            raise self.PasswordNotFoundError(f"No password list found with ID {pw_list_id}")

@@ -45,7 +45,7 @@ dev = [
 "Homepage" = "https://github.ncsu.edu/SAT/sat-utils"
 
 [tool.flit.module]
-name = "sat_utils"
+name = "sat"
 
 [tool.black]
 target-version = ["py310"]

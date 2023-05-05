@@ -20,7 +20,7 @@ class Slack:
                 filename=file_name,
                 filetype=file_type,
                 title=title,
-                initial_comment=initial_comment
+                initial_comment=initial_comment,
             )
         except Exception as e:
-            print("Slack encountered an error: {}".format(e))
+            print(f"Slack encountered an error: {e}")
