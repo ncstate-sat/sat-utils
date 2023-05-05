@@ -2,12 +2,12 @@
 
 This repository contains a collection of shared utility functions.
 
--   Slack: A class to upload files to our Slack workspace
--   DB: Manage connections for our databases ([docs](https://github.ncsu.edu/SAT/sat-utils/blob/main/docs/db.md))
+- Slack: A class to upload files to our Slack workspace
+- SATLogger: A standard logger for SAT projects
 
-## Usage
+## Installation
 
-```bash
+```shell
 # Install the package from private PyPI (CLI)
 $ pip install -i https://pypi.ehps.ncsu.edu sat-utils
 
@@ -15,8 +15,11 @@ $ pip install -i https://pypi.ehps.ncsu.edu sat-utils
 $ pip install -r requirements.txt --extra-index-url https://pypi.ehps.ncsu.edu
 ```
 
-```bash
+## Usage
 
-# Import get db function
->>> from sat_utils.db import get_ccure_db_conn
+### Slack
+
+```python
+from sat.slack import Slack
+
 ```
