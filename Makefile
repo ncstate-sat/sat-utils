@@ -12,4 +12,5 @@ install-dev:
 
 setup:
 	@echo 'Setting up the environment...'
+	pip config --site set site.extra-index-url https://pypi.ehps.ncsu.edu/
 	make install-dev
