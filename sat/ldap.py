@@ -1,7 +1,7 @@
 """ A simple LDAP connector
     The library standardizes how we get connected to our LDAP environment.
 
-    If no configuration data is avalable to the module
+    If no configuration data is available to the module
     it will attempt to make a connection to localhost
     on the default tcp port 389.
 """
@@ -37,7 +37,7 @@ def get_secure_connection(**settings):
     ----------
     name : settings
     A dictionary of values that define the ldap environment.
-    Should only contain the paramters used by the function.
+    Should only contain the parameters used by the function.
 
     name: server
     The ldap host to connect to.
@@ -50,7 +50,7 @@ def get_secure_connection(**settings):
 
     password:
     The password associated to the bind user specified
-    in the unsername paramater.
+    in the username parameter.
 
     Usage:
     ------
