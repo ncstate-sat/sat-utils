@@ -1,10 +1,14 @@
 import logging
+import os
 
 
 class SATLogger:
     def __init__(self, name: str = __name__, level: int = logging.INFO) -> None:
         self.logger = logging.getLogger(name)
-        self.logger.setLevel(level)
+        if os.getenv("DEBUG"):
+            self.logger.setLevel(logging.DEBUG)
+        else:
+            self.logger.setLevel(level)
         self.formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
         self.handler = logging.StreamHandler()
         self.handler.setFormatter(self.formatter)
