@@ -12,6 +12,9 @@ appropriate db engine.
 The second is a helper method that takes an envornment variable name 
 and retrieves the connection string from the environment and calls the primary.
 
+Lastly, there is an Enum that explicitly defines the types.
+The current values are ConnectionType.SQL and ConnectionType.ORACLE.
+
 __install__
 
 `pip install --extra-index https://pypi.ehps.ncsu.edu sat-utils`
@@ -29,7 +32,7 @@ connection = get_db_connection(connection_string, 'oracle')
 __getting connected with an environment variable__
 
 ```
-from sat.db import get_named_db_connection
+from sat.db import ConnectionType as ctype, get_named_db_connection
 
-connection = get_db_connection('ENV_PROD_CONNECTION', 'oracle')
+connection = get_db_connection('ENV_PROD_CONNECTION', ctype.ORACLE)
 ```
