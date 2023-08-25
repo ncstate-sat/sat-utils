@@ -45,9 +45,8 @@ def get_db_connection(conn_string:str, type:ConnectionType):
     conn_str: str
         The database specific connection string you are opening 
          a connection to.
-    type: str
-        The database drive the connection uses.
-        Currently only 'oracle' or 'sql' are supported options.
+    type: ConnectionType
+        The database driver the connection uses.
     return: Returns a database connection object
     """
     try:
@@ -68,9 +67,8 @@ def get_named_db_connection(db_env_name:str, type:ConnectionType):
     db_env_name: str
         The name of a defined environment variable that contains a 
          specific connection string you are opening a connection to.
-    type: str
-        The database drive the connection uses.
-        Currently only 'oracle' or 'sql' are supported options.
+    type: ConnectionType
+        The database driver the connection uses.
     return: Returns a database connection object 
     """
     _conn_string = _get_connection_string(db_env_name)

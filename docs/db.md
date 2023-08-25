@@ -22,7 +22,7 @@ __install__
 __getting connected with a connection string__
 
 ```
-from sat.db import get_db_connection
+from sat.db import ConnectionType as ctype, get_db_connection
 from os import getenv
 
 connection_string = 'user/password@localhost/orcl'
