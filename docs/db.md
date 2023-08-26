@@ -1,23 +1,20 @@
 # Database Module
 
+## Overview
+
 The dabase module aims to standardize how we connect to our data environments
 
 It currently supports two database engines, Oracle and SQL server. 
 Support for SQL server is provided by pyodbc while support for Oracle is provided by cx_Oracle.
 
-There are two methods implemented by the module. The first method takes a 
-connection string paramater and an engine paramater and connects to the
-appropriate db engine.
-
-The second is a helper method that takes an envornment variable name 
-and retrieves the connection string from the environment and calls the primary.
-
-Lastly, there is an Enum that explicitly defines the types.
-The current values are ConnectionType.SQL and ConnectionType.ORACLE.
+The current supported  connection types are ConnectionType.SQL and ConnectionType.ORACLE.
 
 __install__
 
 `pip install --extra-index https://pypi.ehps.ncsu.edu sat-utils`
+
+
+##Usage
 
 __getting connected with a connection string__
 

@@ -1,19 +1,16 @@
 from unittest import main, mock, TestCase
-from unittest.mock import patch
-import os
+from unittest.mock import patch, Mock
+from sat.db import get_db_connection, ConnectionType as ctype, pyodbc
+from pyodbc import InterfaceError
 
 class TestDatabaseConnectivity(TestCase):
 
-    @patch.dict(os.environ, {"SERVER_CONN": "Fake Connection String"}, clear=True)
-    def test_get_named_db_connection(self):
-        from sat.db import get_named_db_connection, ConnectionType as ctype
-        with patch("pyodbc.connect") as mockeddb:
-            mockeddb.add = mock.MagicMock(return_value = "Connected")
-            conn = get_named_db_connection("SERVER_CONN", ctype.SQL)
-        assert conn
+    def test_get_db_connection_pyodbc_bad_connection_string(self):
+        conn_string = "Bad Connection String"
+        with self.assertRaises(Exception) as _:
+            get_db_connection(conn_string, ctype.SQL)
 
-    def test_oracle_connection(self):
-        pass
-        
-if __name__ == "__main__":
-    main()
+    def test_get_db_connection_cx_Oracle_bad_connection_string(self):
+        conn_string = "Bad Connection String"
+        with self.assertRaises(Exception) as _:
+            get_db_connection(conn_string, ctype.ORACLE)
