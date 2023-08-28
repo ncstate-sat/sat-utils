@@ -1,16 +1,27 @@
-from unittest import main, mock, TestCase
-from unittest.mock import patch, Mock
-from sat.db import get_db_connection, ConnectionType as ctype, pyodbc
+from unittest.mock import patch
+
+import pytest
+from cx_Oracle import DatabaseError
 from pyodbc import InterfaceError
+from sat.db import ConnectionType as ctype
+from sat.db import SatDBException, get_db_connection
 
-class TestDatabaseConnectivity(TestCase):
 
-    def test_get_db_connection_pyodbc_bad_connection_string(self):
+def test_pyodbc_errors():
+    with patch("sat.db.pyodbc") as mock_pyodbc:
         conn_string = "Bad Connection String"
-        with self.assertRaises(Exception) as _:
+        mock_pyodbc.connect.side_effect = InterfaceError("Thrown interface error.")
+        with pytest.raises(SatDBException) as ex:
             get_db_connection(conn_string, ctype.SQL)
+    assert "InterfaceError" in str(ex.value)
+    assert "Thrown interface error." in str(ex.value.error)
 
-    def test_get_db_connection_cx_Oracle_bad_connection_string(self):
-        conn_string = "Bad Connection String"
-        with self.assertRaises(Exception) as _:
+
+def test_oracle_error():
+    with patch("sat.db.cx_Oracle") as mock_oracle:
+        conn_string = "Test Connection String"
+        mock_oracle.connect.side_effect = DatabaseError("Thrown database error.")
+        with pytest.raises(SatDBException) as ex:
             get_db_connection(conn_string, ctype.ORACLE)
+    assert "DatabaseError" in str(ex.value)
+    assert "Thrown database error." in str(ex.value.error)
