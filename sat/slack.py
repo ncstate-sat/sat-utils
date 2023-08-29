@@ -1,4 +1,5 @@
 from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 from sat.logs import SATLogger
 
@@ -33,6 +34,16 @@ class Slack:
                 title=title,
                 initial_comment=initial_comment,
             )
-        # TODO: Add specific exceptions
-        except Exception as e:
-            logger.info(f"Slack encountered an error: {e}")
+        except SlackApiError as e:
+            logger.info(f"Slack encountered an error: {e.response['error']}")
+
+    def send_message(self, channel, message):
+        """
+        Send a message to a Slack channel.
+        :param channel: Slack channel to send to
+        :param message: Message to send
+        """
+        try:
+            self.client.chat_postMessage(channel=channel, text=message)
+        except SlackApiError as e:
+            logger.info(f"Slack encountered an error: {e.response['error']}")
