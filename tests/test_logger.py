@@ -15,6 +15,8 @@ def test_default_logger(caplog):
     assert "Test message" in caplog.text
     logger.debug("DEBUG message")
     assert "DEBUG message" not in caplog.text
+    logger.error("ERROR message")
+    assert "ERROR message" in caplog.text
 
 
 @mock.patch.dict(os.environ, {"DEBUG": "1"}, clear=True)

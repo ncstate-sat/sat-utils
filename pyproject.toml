@@ -6,8 +6,9 @@ build-backend = "flit_core.buildapi"
 name = "sat-utils"
 version = "1.1.10"
 authors = [
-  { name="Ryan Semmler", email="rsemmle@ncsu.edu" },
-  { name="Shawn Taylor", email="staylor8@ncsu.edu" },
+    { name="Ryan Semmler", email="rsemmle@ncsu.edu" },
+    { name="Shawn Taylor", email="staylor8@ncsu.edu" },
+    { name="Jeremy Gibson", email="jmgibso3@ncsu.edu"},
 ]
 description = "Contains a collection of shared utility functions"
 readme = "README.md"
