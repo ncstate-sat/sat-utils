@@ -23,7 +23,8 @@ def get_db_connection(conn_type: ConnectionType, **kwargs):
     ----------
     conn_type: ConnectionType
         The database driver the connection uses.
-    kwargs: contains the connection string or connection dictionary.
+    kwargs[conn_string]: A connection string.
+    kwargs[conn_dict]: A dictionary of connection parameters.
 
     Returns
     -------
@@ -39,8 +40,7 @@ def get_db_connection(conn_type: ConnectionType, **kwargs):
         if conn_type == ConnectionType.CX_ORACLE:
             return cx_Oracle.connect(kwargs.get("conn_string"))
         if conn_type == ConnectionType.PY_ORACLE:
-            params = kwargs.get("conn_dict")
-            return oracledb.connect(**params)
+            return oracledb.connect(**kwargs.get("conn_dict"))
     except Exception as error:
         raise SatDBException(
             f"There was an {error.__class__.__name__} when connecting to the database: {error}"
