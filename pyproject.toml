@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "sat-utils"
-version = "1.1.13"
+version = "1.1.14"
 authors = [
     { name="Ryan Semmler", email="rsemmle@ncsu.edu" },
     { name="Shawn Taylor", email="staylor8@ncsu.edu" },
