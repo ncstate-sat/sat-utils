@@ -165,3 +165,7 @@ cython_debug/
 
 # IDE folders
 .idea
+.vscode
+
+# repo pulled in for CI/CD
+sat-actions/
