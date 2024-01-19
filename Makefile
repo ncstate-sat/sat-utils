@@ -1,7 +1,7 @@
 update-requirements:
 	pip install -U -q pip-tools
-	pip-compile --generate-hashes -o requirements/base/base.txt pyproject.toml
-	pip-compile --generate-hashes --extra dev -o requirements/dev/dev.txt pyproject.toml
+	pip-compile -o requirements/base/base.txt pyproject.toml
+	pip-compile --extra dev -o requirements/dev/dev.txt pyproject.toml
 
 install-dev:
 	@echo 'Installing pip-tools...'
