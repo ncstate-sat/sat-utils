@@ -38,7 +38,10 @@ logger.info("Hello, world!")
 
 ### Gravity Forms
 
-Two environment variables are required to use Gravity Forms.
+Two environment variables are required to authenticate with the Gravity Forms API.
+
+- CONSUMER_KEY
+- CONSUMER_SECRET
 
 ```python
 from sat.gravity_forms import GravityForms
