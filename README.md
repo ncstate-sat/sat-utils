@@ -36,6 +36,16 @@ logger = SATLogger(__name__)
 logger.info("Hello, world!")
 ```
 
+### Gravity Forms
+
+Two environment variables are required to use Gravity Forms.
+
+```python
+from sat.gravity_forms import GravityForms
+
+requests = GravityForms.get_cards_requested()
+```
+
 ## Development
 
 ### Setup
