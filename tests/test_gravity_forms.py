@@ -15,7 +15,7 @@ def test_environment_variable_error():
 
 
 def test_request_exception():
-    with patch("your_module.OAuth1Session.get") as mock_get:
+    with patch("requests_oauthlib.OAuth1Session.get") as mock_get:
         gravity_forms = GravityForms(consumer_key="your_key", consumer_secret="your_secret")
         mock_get.side_effect = RequestException("Simulated request exception.")
         with pytest.raises(RequestException) as ex:
@@ -24,7 +24,7 @@ def test_request_exception():
 
 
 def test_oauth_error():
-    with patch("your_module.OAuth1Session") as mock_oauth_session:
+    with patch("requests_oauthlib.OAuth1Session") as mock_oauth_session:
         gravity_forms = GravityForms(consumer_key="your_key", consumer_secret="your_secret")
         mock_oauth_session.side_effect = OAuth1Error("Simulated OAuth error.")
         with pytest.raises(OAuth1Error) as ex:
