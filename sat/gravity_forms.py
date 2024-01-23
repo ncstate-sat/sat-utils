@@ -18,31 +18,48 @@ class GravityForms:
     """
 
     session = None
+    base_url = "https://onecard.ncsu.edu/wp-json/gf/v2"
 
-    @classmethod
-    def get_session(cls) -> OAuth1Session:
-        """Gets the existing authenticated session."""
-        if cls.session is None:
-            session = OAuth1Session(
-                os.getenv("CONSUMER_KEY"),
-                client_secret=os.getenv("CONSUMER_SECRET"),
-                signature_type=oauthlib.oauth1.SIGNATURE_TYPE_QUERY,
-            )
+    def __init__(self, **settings) -> None:
+        """
+        Configure the connection to Gravity Forms.
 
-        return session
+        Optional Parameters:
+        - consumer_key: Key for accessing the Gravity Forms API.
+        - consumer_secret: Secret for authenticating with the Gravity Forms API.
+        - base_url: An alternate base URL, if different than the default.
+        """
+        self.session = OAuth1Session(
+            settings.get("consumer_key", os.getenv("CONSUMER_KEY")),
+            client_secret=settings.get("consumer_secret", os.getenv("CONSUMER_SECRET")),
+            signature_type=oauthlib.oauth1.SIGNATURE_TYPE_QUERY,
+        )
+        self.base_url = settings.get("base_url", self.base_url)
 
-    @classmethod
-    def get_sponsors(cls):
+    def get_sponsors(self):
         """Gets the sponsor."""
-        session = cls.get_session()
-        response = session.get("https://onecard.ncsu.edu/wp-json/gf/v2/forms/2/entries")
+        try:
+            response = self.session.get(self.base_url + "/forms/2/entries")
+            return response.json()
+        except Exception as e:
+            print(e)
+            raise e
 
-        return response.json()
-
-    @classmethod
-    def get_cards_requested(cls):
+    def get_cards_requested(self):
         """Gets requested cards."""
-        session = cls.get_session()
-        response = session.get("https://onecard.ncsu.edu/wp-json/gf/v2/forms/3/entries")
-
+        response = self.session.get(self.base_url + "/forms/3/entries")
         return response.json()
+
+    def get(self, endpoint: str):
+        """
+        Submits a GET request to a specified endpoint.
+
+        Parameters:
+        - endpoint: The string representing the endpoint URL. (ex. "/forms")
+        """
+        try:
+            response = self.session.get(self.base_url + endpoint)
+            return response.json()
+        except Exception as e:
+            print(e)
+            raise e
