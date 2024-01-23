@@ -9,6 +9,7 @@ Two required environment variables:
 import os
 
 import oauthlib
+from requests.exceptions import RequestException
 from requests_oauthlib import OAuth1Session
 
 
@@ -29,9 +30,22 @@ class GravityForms:
         - consumer_secret: Secret for authenticating with the Gravity Forms API.
         - base_url: An alternate base URL, if different than the default.
         """
+        consumer_key = settings.get("consumer_key", os.getenv("CONSUMER_KEY"))
+        consumer_secret = settings.get("consumer_secret", os.getenv("CONSUMER_SECRET"))
+
+        if not consumer_key:
+            raise RuntimeError(
+                "A consumer_key is required as either an environment variable or parameter."
+            )
+
+        if not consumer_secret:
+            raise RuntimeError(
+                "A consumer_secret is required as either an environment variable or parameter."
+            )
+
         self.session = OAuth1Session(
-            settings.get("consumer_key", os.getenv("CONSUMER_KEY")),
-            client_secret=settings.get("consumer_secret", os.getenv("CONSUMER_SECRET")),
+            consumer_key,
+            client_secret=consumer_secret,
             signature_type=oauthlib.oauth1.SIGNATURE_TYPE_QUERY,
         )
         self.base_url = settings.get("base_url", self.base_url)
@@ -41,7 +55,7 @@ class GravityForms:
         try:
             response = self.session.get(self.base_url + "/forms/2/entries")
             return response.json()
-        except Exception as e:
+        except RequestException as e:
             print(e)
             raise e
 
@@ -60,6 +74,6 @@ class GravityForms:
         try:
             response = self.session.get(self.base_url + endpoint)
             return response.json()
-        except Exception as e:
+        except RequestException as e:
             print(e)
             raise e
