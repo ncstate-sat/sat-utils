@@ -8,7 +8,8 @@ from sat.gravity_forms import GravityForms
 
 def test_environment_variable_error():
     try:
-        GravityForms.get_sponsors()
+        gravity_forms = GravityForms()
+        gravity_forms.get_sponsors()
         assert False
     except RuntimeError:
         assert True
