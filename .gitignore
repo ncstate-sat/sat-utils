@@ -170,4 +170,4 @@ cython_debug/
 # repo pulled in for CI/CD
 sat-actions/
 
-sat-utils
+sat-utils-venv
