@@ -12,6 +12,10 @@ import oauthlib
 from requests.exceptions import RequestException
 from requests_oauthlib import OAuth1Session
 
+from sat.logs import SATLogger
+
+logger = SATLogger(name=__name__)
+
 
 class GravityForms:
     """
@@ -19,7 +23,7 @@ class GravityForms:
     """
 
     session = None
-    base_url = "https://onecard.ncsu.edu/wp-json/gf/v2"
+    base_url = None
 
     def __init__(self, **settings) -> None:
         """
@@ -30,17 +34,25 @@ class GravityForms:
         - consumer_secret: Secret for authenticating with the Gravity Forms API.
         - base_url: An alternate base URL, if different than the default.
         """
-        consumer_key = settings.get("consumer_key", os.getenv("CONSUMER_KEY"))
-        consumer_secret = settings.get("consumer_secret", os.getenv("CONSUMER_SECRET"))
+        consumer_key = settings.get("consumer_key", os.getenv("GRAVITY_FORMS_CONSUMER_KEY"))
+        consumer_secret = settings.get(
+            "consumer_secret", os.getenv("GRAVITY_FORMS_CONSUMER_SECRET")
+        )
+        self.base_url = settings.get("base_url", os.getenv("GRAVITY_FORMS_BASE_URL"))
 
         if not consumer_key:
-            raise RuntimeError(
+            raise ValueError(
                 "A consumer_key is required as either an environment variable or parameter."
             )
 
         if not consumer_secret:
-            raise RuntimeError(
+            raise ValueError(
                 "A consumer_secret is required as either an environment variable or parameter."
+            )
+
+        if not self.base_url:
+            raise ValueError(
+                "A base_url is required as either an environment variable or parameter."
             )
 
         self.session = OAuth1Session(
@@ -49,20 +61,6 @@ class GravityForms:
             signature_type=oauthlib.oauth1.SIGNATURE_TYPE_QUERY,
         )
         self.base_url = settings.get("base_url", self.base_url)
-
-    def get_sponsors(self):
-        """Gets the sponsor."""
-        try:
-            response = self.session.get(self.base_url + "/forms/2/entries")
-            return response.json()
-        except RequestException as e:
-            print(e)
-            raise e
-
-    def get_cards_requested(self):
-        """Gets requested cards."""
-        response = self.session.get(self.base_url + "/forms/3/entries")
-        return response.json()
 
     def get(self, endpoint: str):
         """
@@ -75,5 +73,5 @@ class GravityForms:
             response = self.session.get(self.base_url + endpoint)
             return response.json()
         except RequestException as e:
-            print(e)
-            raise e
+            logger.error(str(e))
+            return {}

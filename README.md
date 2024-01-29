@@ -38,15 +38,20 @@ logger.info("Hello, world!")
 
 ### Gravity Forms
 
-Two environment variables are required to authenticate with the Gravity Forms API.
+Three environment variables are required to authenticate with the Gravity Forms API.
 
-- CONSUMER_KEY
-- CONSUMER_SECRET
+- GRAVITY_FORMS_CONSUMER_KEY
+- GRAVITY_FORMS_CONSUMER_SECRET
+- GRAVITY_FORMS_BASE_URL
+
+Alternatively, these values can be passed into the GravityForms initialization as parameters.
 
 ```python
 from sat.gravity_forms import GravityForms
 
-requests = GravityForms.get_cards_requested()
+
+gravity = GravityForms()
+cards_requested = gravity.get("/forms/3/entries")
 ```
 
 ## Development
