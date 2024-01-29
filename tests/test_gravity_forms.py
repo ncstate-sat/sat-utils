@@ -20,14 +20,8 @@ def test_request_exception_get():
             consumer_key="your_key", consumer_secret="your_secret", base_url="https://baseurl.edu"
         )
         mock_get.side_effect = RequestException("Simulated request exception.")
-        # with pytest.raises(RequestException) as ex:
-        #     gravity_forms.get("/forms")
-        try:
+
+        with pytest.raises(RequestException) as ex:
             gravity_forms.get("/forms")
-        except RequestException as ex:
-            # Asserting that the error message in the caught exception matches the simulated one
-            assert str(ex) == "Simulated request exception."
-        else:
-            # If no exception is raised, fail the test
-            pytest.fail("Expected RequestException but no exception was raised.")
-    # assert "Simulated request exception." in str(ex.value)
+
+        assert str(ex.value) == "Simulated request exception."
