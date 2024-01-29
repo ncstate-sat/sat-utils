@@ -60,7 +60,6 @@ class GravityForms:
             client_secret=consumer_secret,
             signature_type=oauthlib.oauth1.SIGNATURE_TYPE_QUERY,
         )
-        self.base_url = settings.get("base_url", self.base_url)
 
     def get(self, endpoint: str):
         """
