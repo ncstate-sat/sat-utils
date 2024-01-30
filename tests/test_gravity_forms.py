@@ -1,6 +1,5 @@
 from unittest.mock import patch
 
-import pytest
 from requests.exceptions import RequestException
 from sat.gravity_forms import GravityForms
 
@@ -20,8 +19,6 @@ def test_request_exception_get(caplog):
         gravity_forms = GravityForms(
             consumer_key="your_key", consumer_secret="your_secret", base_url="https://baseurl.edu"
         )
-
-        with pytest.raises(RequestException):
-            gravity_forms.get("/forms")
-
+        response = gravity_forms.get("/forms/2/entries")
+        assert response == {}
         assert "Simulated request exception." in caplog.text
