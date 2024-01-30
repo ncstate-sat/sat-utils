@@ -16,14 +16,12 @@ def test_environment_variable_error():
 
 def test_request_exception_get(caplog):
     with patch("requests_oauthlib.OAuth1Session.get") as mock_get:
+        mock_get.side_effect = RequestException("Simulated request exception.")
         gravity_forms = GravityForms(
             consumer_key="your_key", consumer_secret="your_secret", base_url="https://baseurl.edu"
         )
-        mock_get.side_effect = RequestException("Simulated request exception.")
 
-        print(f"1 - {caplog.text}")
         with pytest.raises(RequestException):
             gravity_forms.get("/forms")
 
-        print(f"2 - {caplog.text}")
         assert "Simulated request exception." in caplog.text
