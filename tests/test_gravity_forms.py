@@ -21,7 +21,9 @@ def test_request_exception_get(caplog):
         )
         mock_get.side_effect = RequestException("Simulated request exception.")
 
+        print(f"1 - {caplog.text}")
         with pytest.raises(RequestException):
             gravity_forms.get("/forms")
 
+        print(f"2 - {caplog.text}")
         assert "Simulated request exception." in caplog.text
