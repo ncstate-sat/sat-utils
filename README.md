@@ -36,6 +36,24 @@ logger = SATLogger(__name__)
 logger.info("Hello, world!")
 ```
 
+### Gravity Forms
+
+Three environment variables are required to authenticate with the Gravity Forms API.
+
+- GRAVITY_FORMS_CONSUMER_KEY
+- GRAVITY_FORMS_CONSUMER_SECRET
+- GRAVITY_FORMS_BASE_URL
+
+Alternatively, these values can be passed into the GravityForms initialization as parameters.
+
+```python
+from sat.gravity_forms import GravityForms
+
+
+gravity = GravityForms()
+cards_requested = gravity.get("/forms/3/entries")
+```
+
 ## Development
 
 ### Setup
