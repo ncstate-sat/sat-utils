@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from requests.exceptions import RequestException
-from sat.gravity_forms import GravityForms
+from sat.gravity_forms import Entry, Form, GravityForms
 
 
 def test_environment_variable_error():
@@ -80,3 +80,35 @@ def test_get_entry_exception():
             assert False
         except RequestException as e:
             assert str(e) == "Simulated request exception."
+
+
+def test_create_form_model():
+    form_data = {
+        "id": "1",
+        "title": "form title",
+        "description": "form description",
+        "is_active": True,
+        "custom_field": "completely custom",
+    }
+    form = Form(**form_data)
+    assert form.id == "1"
+    assert form.title == "form title"
+    assert form.description == "form description"
+    assert form.is_active is True
+    assert form.details == {"custom_field": "completely custom"}
+
+
+def test_create_entry_model():
+    entry_data = {
+        "id": "1",
+        "form_id": "1",
+        "created_by": "yours truly",
+        "status": "alive",
+        "custom_field": "completely custom",
+    }
+    entry = Entry(**entry_data)
+    assert entry.id == "1"
+    assert entry.form_id == "1"
+    assert entry.created_by == "yours truly"
+    assert entry.status == "alive"
+    assert entry.details == {"custom_field": "completely custom"}
