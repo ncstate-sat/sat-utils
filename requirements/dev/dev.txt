@@ -4,22 +4,48 @@
 #
 #    pip-compile --extra=dev --output-file=requirements/dev/dev.txt pyproject.toml
 #
-appnope==0.1.3
-    # via ipython
+--extra-index-url https://pypi.ehps.ncsu.edu/
+
+aiofiles==22.1.0
+    # via ypy-websocket
+aiosqlite==0.20.0
+    # via ypy-websocket
+anyio==4.3.0
+    # via jupyter-server
+argon2-cffi==23.1.0
+    # via
+    #   jupyter-server
+    #   nbclassic
+    #   notebook
+argon2-cffi-bindings==21.2.0
+    # via argon2-cffi
+arrow==1.3.0
+    # via isoduration
 asttokens==2.2.1
     # via stack-data
 attrs==23.1.0
-    # via pytest
+    # via
+    #   jsonschema
+    #   pytest
+    #   referencing
+babel==2.14.0
+    # via jupyterlab-server
 backcall==0.2.0
     # via ipython
 bandit==1.7.5
     # via sat-utils (pyproject.toml)
+beautifulsoup4==4.12.3
+    # via nbconvert
 black==23.3.0
     # via sat-utils (pyproject.toml)
+bleach==6.1.0
+    # via nbconvert
 certifi==2022.12.7
     # via requests
 cffi==1.15.1
-    # via cryptography
+    # via
+    #   argon2-cffi-bindings
+    #   cryptography
 cfgv==3.3.1
     # via pre-commit
 charset-normalizer==3.1.0
@@ -30,29 +56,42 @@ click==8.1.3
     #   mkdocs
 colorama==0.4.6
     # via mkdocs-material
+comm==0.2.1
+    # via ipykernel
 coverage[toml]==7.2.5
     # via
-    #   coverage
     #   pytest-cov
     #   sat-utils (pyproject.toml)
 cryptography==41.0.3
     # via oracledb
 cx-oracle==8.3.0
     # via sat-utils (pyproject.toml)
+debugpy==1.8.1
+    # via ipykernel
 decorator==5.1.1
     # via ipython
+defusedxml==0.7.1
+    # via nbconvert
 distlib==0.3.6
     # via virtualenv
 docutils==0.19
     # via flit
+entrypoints==0.4
+    # via jupyter-client
+exceptiongroup==1.2.0
+    # via anyio
 executing==1.2.0
     # via stack-data
+fastjsonschema==2.19.1
+    # via nbformat
 filelock==3.12.0
     # via virtualenv
 flit==3.8.0
     # via sat-utils (pyproject.toml)
 flit-core==3.8.0
     # via flit
+fqdn==1.5.1
+    # via jsonschema
 ghp-import==2.1.0
     # via mkdocs
 gitdb==4.0.10
@@ -62,19 +101,96 @@ gitpython==3.1.31
 identify==2.5.24
     # via pre-commit
 idna==3.4
-    # via requests
+    # via
+    #   anyio
+    #   jsonschema
+    #   requests
 iniconfig==2.0.0
     # via pytest
+ipykernel==6.29.2
+    # via
+    #   nbclassic
+    #   notebook
 ipython==8.13.2
-    # via sat-utils (pyproject.toml)
+    # via
+    #   ipykernel
+    #   jupyterlab
+ipython-genutils==0.2.0
+    # via
+    #   nbclassic
+    #   notebook
+isoduration==20.11.0
+    # via jsonschema
 isort==5.12.0
     # via sat-utils (pyproject.toml)
 jedi==0.18.2
     # via ipython
 jinja2==3.1.2
     # via
+    #   jupyter-server
+    #   jupyterlab
+    #   jupyterlab-server
     #   mkdocs
     #   mkdocs-material
+    #   nbclassic
+    #   nbconvert
+    #   notebook
+json5==0.9.17
+    # via jupyterlab-server
+jsonpointer==2.4
+    # via jsonschema
+jsonschema[format-nongpl]==4.21.1
+    # via
+    #   jupyter-events
+    #   jupyterlab-server
+    #   nbformat
+jsonschema-specifications==2023.12.1
+    # via jsonschema
+jupyter-client==7.4.9
+    # via
+    #   ipykernel
+    #   jupyter-server
+    #   nbclassic
+    #   nbclient
+    #   notebook
+jupyter-core==5.7.1
+    # via
+    #   ipykernel
+    #   jupyter-client
+    #   jupyter-server
+    #   jupyterlab
+    #   nbclassic
+    #   nbclient
+    #   nbconvert
+    #   nbformat
+    #   notebook
+jupyter-events==0.9.0
+    # via
+    #   jupyter-server
+    #   jupyter-server-fileid
+jupyter-server==2.12.5
+    # via
+    #   jupyter-server-fileid
+    #   jupyterlab
+    #   jupyterlab-server
+    #   nbclassic
+    #   notebook-shim
+jupyter-server-fileid==0.9.1
+    # via jupyter-server-ydoc
+jupyter-server-terminals==0.5.2
+    # via jupyter-server
+jupyter-server-ydoc==0.8.0
+    # via jupyterlab
+jupyter-ydoc==0.2.5
+    # via
+    #   jupyter-server-ydoc
+    #   jupyterlab
+jupyterlab==3.6.7
+    # via sat-utils (pyproject.toml)
+jupyterlab-pygments==0.3.0
+    # via nbconvert
+jupyterlab-server==2.24.0
+    # via jupyterlab
 ldap3==2.9.1
     # via sat-utils (pyproject.toml)
 markdown==3.3.7
@@ -85,13 +201,19 @@ markdown==3.3.7
 markdown-it-py==2.2.0
     # via rich
 markupsafe==2.1.2
-    # via jinja2
+    # via
+    #   jinja2
+    #   nbconvert
 matplotlib-inline==0.1.6
-    # via ipython
+    # via
+    #   ipykernel
+    #   ipython
 mdurl==0.1.2
     # via markdown-it-py
 mergedeep==1.3.4
     # via mkdocs
+mistune==3.0.2
+    # via nbconvert
 mkdocs==1.4.3
     # via mkdocs-material
 mkdocs-material==9.1.9
@@ -104,17 +226,54 @@ mypy-extensions==1.0.0
     # via
     #   black
     #   mypy
+nbclassic==1.0.0
+    # via
+    #   jupyterlab
+    #   notebook
+nbclient==0.9.0
+    # via nbconvert
+nbconvert==7.16.1
+    # via
+    #   jupyter-server
+    #   nbclassic
+    #   notebook
+nbformat==5.9.2
+    # via
+    #   jupyter-server
+    #   nbclassic
+    #   nbclient
+    #   nbconvert
+    #   notebook
+nest-asyncio==1.6.0
+    # via
+    #   ipykernel
+    #   jupyter-client
+    #   nbclassic
+    #   notebook
 nodeenv==1.7.0
     # via pre-commit
+notebook==6.5.6
+    # via jupyterlab
+notebook-shim==0.2.4
+    # via nbclassic
 oauthlib==3.2.2
     # via requests-oauthlib
-oracledb==1.4.1
+oracledb==2.0.1
     # via sat-utils (pyproject.toml)
+overrides==7.7.0
+    # via jupyter-server
 packaging==23.1
     # via
     #   black
+    #   ipykernel
+    #   jupyter-server
+    #   jupyterlab
+    #   jupyterlab-server
     #   mkdocs
+    #   nbconvert
     #   pytest
+pandocfilters==1.5.1
+    # via nbconvert
 parso==0.8.3
     # via jedi
 pathspec==0.11.1
@@ -128,15 +287,25 @@ pickleshare==0.7.5
 platformdirs==3.5.0
     # via
     #   black
+    #   jupyter-core
     #   virtualenv
 pluggy==1.0.0
     # via pytest
 pre-commit==2.21.0
     # via sat-utils (pyproject.toml)
+prometheus-client==0.20.0
+    # via
+    #   jupyter-server
+    #   nbclassic
+    #   notebook
 prompt-toolkit==3.0.38
     # via ipython
+psutil==5.9.8
+    # via ipykernel
 ptyprocess==0.7.0
-    # via pexpect
+    # via
+    #   pexpect
+    #   terminado
 pure-eval==0.2.2
     # via stack-data
 py==1.11.0
@@ -149,6 +318,7 @@ pygments==2.15.1
     # via
     #   ipython
     #   mkdocs-material
+    #   nbconvert
     #   rich
     #   sat-utils (pyproject.toml)
 pymdown-extensions==9.11
@@ -165,44 +335,94 @@ pytest-cov==4.0.0
 pytest-mock==3.10.0
     # via sat-utils (pyproject.toml)
 python-dateutil==2.8.2
-    # via ghp-import
+    # via
+    #   arrow
+    #   ghp-import
+    #   jupyter-client
+python-json-logger==2.0.7
+    # via jupyter-events
 pyupgrade==2.38.4
     # via sat-utils (pyproject.toml)
 pyyaml==6.0
     # via
     #   bandit
+    #   jupyter-events
     #   mkdocs
     #   pre-commit
     #   pymdown-extensions
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
+pyzmq==24.0.1
+    # via
+    #   ipykernel
+    #   jupyter-client
+    #   jupyter-server
+    #   nbclassic
+    #   notebook
+referencing==0.33.0
+    # via
+    #   jsonschema
+    #   jsonschema-specifications
+    #   jupyter-events
 regex==2023.5.5
     # via mkdocs-material
 requests==2.30.0
     # via
     #   flit
+    #   jupyterlab-server
     #   mkdocs-material
     #   requests-oauthlib
     #   sat-utils (pyproject.toml)
 requests-oauthlib==1.3.1
     # via sat-utils (pyproject.toml)
+rfc3339-validator==0.1.4
+    # via
+    #   jsonschema
+    #   jupyter-events
+rfc3986-validator==0.1.1
+    # via
+    #   jsonschema
+    #   jupyter-events
 rich==13.3.5
     # via bandit
+rpds-py==0.18.0
+    # via
+    #   jsonschema
+    #   referencing
 ruff==0.0.263
     # via sat-utils (pyproject.toml)
+send2trash==1.8.2
+    # via
+    #   jupyter-server
+    #   nbclassic
+    #   notebook
 six==1.16.0
     # via
     #   asttokens
+    #   bleach
     #   python-dateutil
+    #   rfc3339-validator
 slack-sdk==3.21.3
     # via sat-utils (pyproject.toml)
 smmap==5.0.0
     # via gitdb
+sniffio==1.3.1
+    # via anyio
+soupsieve==2.5
+    # via beautifulsoup4
 stack-data==0.6.2
     # via ipython
 stevedore==5.0.0
     # via bandit
+terminado==0.18.0
+    # via
+    #   jupyter-server
+    #   jupyter-server-terminals
+    #   nbclassic
+    #   notebook
+tinycss2==1.2.1
+    # via nbconvert
 tokenize-rt==4.2.1
     # via pyupgrade
 toml==0.10.2
@@ -211,15 +431,43 @@ tomli==2.0.1
     # via
     #   black
     #   coverage
+    #   jupyterlab
     #   mypy
 tomli-w==1.0.0
     # via flit
+tornado==6.4
+    # via
+    #   ipykernel
+    #   jupyter-client
+    #   jupyter-server
+    #   jupyterlab
+    #   nbclassic
+    #   notebook
+    #   terminado
 traitlets==5.9.0
     # via
+    #   comm
+    #   ipykernel
     #   ipython
+    #   jupyter-client
+    #   jupyter-core
+    #   jupyter-events
+    #   jupyter-server
     #   matplotlib-inline
+    #   nbclassic
+    #   nbclient
+    #   nbconvert
+    #   nbformat
+    #   notebook
+types-python-dateutil==2.8.19.20240106
+    # via arrow
 typing-extensions==4.5.0
-    # via mypy
+    # via
+    #   aiosqlite
+    #   anyio
+    #   mypy
+uri-template==1.3.0
+    # via jsonschema
 urllib3==2.0.2
     # via requests
 virtualenv==20.23.0
@@ -228,6 +476,20 @@ watchdog==3.0.0
     # via mkdocs
 wcwidth==0.2.6
     # via prompt-toolkit
+webcolors==1.13
+    # via jsonschema
+webencodings==0.5.1
+    # via
+    #   bleach
+    #   tinycss2
+websocket-client==1.7.0
+    # via jupyter-server
+y-py==0.6.2
+    # via
+    #   jupyter-ydoc
+    #   ypy-websocket
+ypy-websocket==0.8.4
+    # via jupyter-server-ydoc
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

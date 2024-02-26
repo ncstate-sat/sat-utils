@@ -4,6 +4,8 @@
 #
 #    pip-compile --output-file=requirements/base/base.txt pyproject.toml
 #
+--extra-index-url https://pypi.ehps.ncsu.edu/
+
 certifi==2022.12.7
     # via requests
 cffi==1.15.1
@@ -20,7 +22,7 @@ ldap3==2.9.1
     # via sat-utils (pyproject.toml)
 oauthlib==3.2.2
     # via requests-oauthlib
-oracledb==1.4.1
+oracledb==2.0.1
     # via sat-utils (pyproject.toml)
 pyasn1==0.5.0
     # via ldap3
