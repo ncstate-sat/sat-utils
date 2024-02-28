@@ -23,7 +23,7 @@ class Form:
     A form object from GravityForms.
     """
 
-    id: int
+    id: str
     title: str
     description: str
     date_created: str
@@ -171,9 +171,9 @@ class GravityForms:
         """
 
         param_string: str = "?"
-        if params is not None:
-            for param in params:
-                param_string += f"{param}={params[param]}&"
+        if params:
+            for key, value in params.items():
+                param_string += f"{key}={value}&"
 
         try:
             response = self.session.get(self.base_url + endpoint + param_string)
@@ -204,12 +204,16 @@ class GravityForms:
         entry = Form(**response)
         return entry
 
-    def get_entries(self, page: int = 1, page_size: int = 20):
+    def get_entries(self, page: int = 1, page_size: int = 20, form_id: Optional[str] = None):
         """
         Gets and returns a list of entries.
         """
+        url = "/entries"
+        if form_id:
+            url = f"/forms/{form_id}/entries"
+
         response = self.get(
-            "/entries", params={"paging[current_page]": page, "paging[page_size]": page_size}
+            url, params={"paging[current_page]": page, "paging[page_size]": page_size}
         )
         entries = []
         for entry in response["entries"]:
