@@ -163,6 +163,22 @@ class GravityForms:
             signature_type=oauthlib.oauth1.SIGNATURE_TYPE_QUERY,
         )
 
+    @staticmethod
+    def _field_filters(keys: [tuple]) -> str:
+        """
+        keys: list of tuples (key, value, operator)
+        'search={"field_filters":
+            [
+                {"key":2,"value":"squiffy","operator":"contains"},
+                {"key":1.3,"value":"squiffy","operator":"contains"}
+            ]
+        }'
+        """
+        field_filters = []
+        for key, value, operator in keys:
+            field_filters.append({"key": key, "value": value, "operator": operator})
+        return json.dumps({"field_filters": field_filters})
+
     def get(self, endpoint: str, params: Optional[dict] = None):
         """
         Submits a GET request to a specified endpoint.
@@ -241,13 +257,9 @@ class GravityForms:
             ]
         }'
         """
-        field_filters = {"field_filters": []}
-        for key, value, operator in keys:
-            inner_dict = {"key": key, "value": value, "operator": operator}
-            field_filters["field_filters"].append(inner_dict)
-        field_filters = json.dumps(field_filters)
+        field_filters = self._field_filters(keys)
         response = self.get(f"/forms/{form_id}/entries", params={"search": field_filters})
         entries = []
-        for entry in response["entries"]:
+        for entry in response.get("entries"):
             entries.append(Entry(**entry))
         return entries
