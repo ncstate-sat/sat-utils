@@ -92,7 +92,7 @@ def test_get_entry_exception():
             assert str(e) == "Simulated request exception."
 
 
-def test_field_filter_construct(caplog):
+def test_field_filter_construct():
     expected_filter = (
         '{"field_filters": [{"key": "search_string", "value": "search_field", "operator": "="}]}'
     )
@@ -100,6 +100,20 @@ def test_field_filter_construct(caplog):
         consumer_key="your_key", consumer_secret="your_secret", base_url="https://baseurl.edu"
     )
     result = gravity_forms.field_filters([("search_string", "search_field", "=")])
+    assert expected_filter in result
+
+
+def test_more_than_one_field_filter_construct():
+    expected_filter = (
+        '{"field_filters": [{"key": "search_string", "value": "search_field", "operator": "="},'
+        ' {"key": "search_string1", "value": "search_field1", "operator": "contains"}]}'
+    )
+    gravity_forms = GravityForms(
+        consumer_key="your_key", consumer_secret="your_secret", base_url="https://baseurl.edu"
+    )
+    result = gravity_forms.field_filters(
+        [("search_string", "search_field", "="), ("search_string1", "search_field1", "contains")]
+    )
     assert expected_filter in result
 
 
