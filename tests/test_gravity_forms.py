@@ -99,7 +99,7 @@ def test_field_filter_construct(caplog):
     gravity_forms = GravityForms(
         consumer_key="your_key", consumer_secret="your_secret", base_url="https://baseurl.edu"
     )
-    result = gravity_forms._field_filters([("search_string", "search_field", "=")])
+    result = gravity_forms.field_filters([("search_string", "search_field", "=")])
     assert expected_filter in result
 
 

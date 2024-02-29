@@ -164,8 +164,10 @@ class GravityForms:
         )
 
     @staticmethod
-    def _field_filters(keys: [tuple]) -> str:
+    def field_filters(keys: [tuple]) -> str:
         """
+        Generates the appropriate JSON string for the field_filters parameter.
+
         keys: list of tuples (key, value, operator)
         'search={"field_filters":
             [
@@ -247,17 +249,7 @@ class GravityForms:
         entry = Entry(**response)
         return entry
 
-    def search_entry(self, keys: [tuple], form_id: int):
-        """
-        keys: list of tuples (key, value, operator)
-        'search={"field_filters":
-            [
-                {"key":2,"value":"squiffy","operator":"contains"},
-                {"key":1.3,"value":"squiffy","operator":"contains"}
-            ]
-        }'
-        """
-        field_filters = self._field_filters(keys)
+    def search_entry(self, field_filters: str, form_id: int):
         response = self.get(f"/forms/{form_id}/entries", params={"search": field_filters})
         entries = []
         for entry in response.get("entries"):
