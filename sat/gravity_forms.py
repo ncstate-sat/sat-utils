@@ -141,19 +141,11 @@ class GravityForms:
         )
         self.base_url = settings.get("base_url", os.getenv("GRAVITY_FORMS_BASE_URL"))
         self.page_size = settings.get("page_size", self.page_size)
-        if not consumer_key:
-            raise ValueError(
-                "A consumer_key is required as either an environment variable or parameter."
-            )
 
-        if not consumer_secret:
+        if not all([consumer_key, consumer_secret, self.base_url]):
             raise ValueError(
-                "A consumer_secret is required as either an environment variable or parameter."
-            )
-
-        if not self.base_url:
-            raise ValueError(
-                "A base_url is required as either an environment variable or parameter."
+                "A consumer_key, consumer_secret, and base_url are required as either environment "
+                "variables or parameters."
             )
 
         self.session = OAuth1Session(
