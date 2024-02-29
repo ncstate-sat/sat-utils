@@ -6,6 +6,7 @@ Two required environment variables:
 - CONSUMER_SECRET
 """
 
+import json
 import os
 from typing import Optional
 
@@ -174,7 +175,6 @@ class GravityForms:
         if params:
             for key, value in params.items():
                 param_string += f"{key}={value}&"
-
         try:
             response = self.session.get(self.base_url + endpoint + param_string)
             return response.json()
@@ -230,3 +230,24 @@ class GravityForms:
         response = self.get(f"/entries/{entry_id}")
         entry = Entry(**response)
         return entry
+
+    def search_entry(self, keys: [tuple], form_id: int):
+        """
+        keys: list of tuples (key, value, operator)
+        'search={"field_filters":
+            [
+                {"key":2,"value":"squiffy","operator":"contains"},
+                {"key":1.3,"value":"squiffy","operator":"contains"}
+            ]
+        }'
+        """
+        field_filters = {"field_filters": []}
+        for key, value, operator in keys:
+            inner_dict = {"key": key, "value": value, "operator": operator}
+            field_filters["field_filters"].append(inner_dict)
+        field_filters = json.dumps(field_filters)
+        response = self.get(f"/forms/{form_id}/entries", params={"search": field_filters})
+        entries = []
+        for entry in response["entries"]:
+            entries.append(Entry(**entry))
+        return entries
