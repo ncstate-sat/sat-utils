@@ -141,7 +141,6 @@ class GravityForms:
         )
         self.base_url = settings.get("base_url", os.getenv("GRAVITY_FORMS_BASE_URL"))
         self.page_size = settings.get("page_size", self.page_size)
-
         if not consumer_key:
             raise ValueError(
                 "A consumer_key is required as either an environment variable or parameter."

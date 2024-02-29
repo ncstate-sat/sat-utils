@@ -7,19 +7,40 @@ from requests.exceptions import RequestException
 from sat.gravity_forms import Entry, Form, GravityForms
 
 
-@mock.patch.dict(os.environ, {"GRAVITY_FORMS_CONSUMER_KEY": ""})
+@mock.patch.dict(
+    os.environ,
+    {
+        "GRAVITY_FORMS_CONSUMER_KEY": "",
+        "GRAVITY_FORMS_CONSUMER_SECRET": "secret",
+        "GRAVITY_FORMS_BASE_URL": "https://baseurl.edu",
+    },
+)
 def test_environment_variable_error_key():
     with pytest.raises(ValueError):
         GravityForms()
 
 
-@mock.patch.dict(os.environ, {"GRAVITY_FORMS_CONSUMER_SECRET": ""})
+@mock.patch.dict(
+    os.environ,
+    {
+        "GRAVITY_FORMS_CONSUMER_KEY": "your_key",
+        "GRAVITY_FORMS_CONSUMER_SECRET": "",
+        "GRAVITY_FORMS_BASE_URL": "https://baseurl.edu",
+    },
+)
 def test_environment_variable_error_secret():
     with pytest.raises(ValueError):
         GravityForms()
 
 
-@mock.patch.dict(os.environ, {"GRAVITY_FORMS_BASE_URL": ""})
+@mock.patch.dict(
+    os.environ,
+    {
+        "GRAVITY_FORMS_CONSUMER_KEY": "your_key",
+        "GRAVITY_FORMS_CONSUMER_SECRET": "your_secret",
+        "GRAVITY_FORMS_BASE_URL": "",
+    },
+)
 def test_environment_variable_error_base_url():
     with pytest.raises(ValueError):
         GravityForms()
