@@ -6,6 +6,7 @@ Two required environment variables:
 - CONSUMER_SECRET
 """
 
+import json
 import os
 from typing import Optional
 
@@ -141,19 +142,10 @@ class GravityForms:
         self.base_url = settings.get("base_url", os.getenv("GRAVITY_FORMS_BASE_URL"))
         self.page_size = settings.get("page_size", self.page_size)
 
-        if not consumer_key:
+        if not all([consumer_key, consumer_secret, self.base_url]):
             raise ValueError(
-                "A consumer_key is required as either an environment variable or parameter."
-            )
-
-        if not consumer_secret:
-            raise ValueError(
-                "A consumer_secret is required as either an environment variable or parameter."
-            )
-
-        if not self.base_url:
-            raise ValueError(
-                "A base_url is required as either an environment variable or parameter."
+                "A consumer_key, consumer_secret, and base_url are required as either environment "
+                "variables or parameters."
             )
 
         self.session = OAuth1Session(
@@ -161,6 +153,24 @@ class GravityForms:
             client_secret=consumer_secret,
             signature_type=oauthlib.oauth1.SIGNATURE_TYPE_QUERY,
         )
+
+    @staticmethod
+    def field_filters(keys: [tuple]) -> str:
+        """
+        Generates the appropriate JSON string for the field_filters parameter.
+
+        keys: list of tuples (key, value, operator)
+        'search={"field_filters":
+            [
+                {"key":2,"value":"squiffy","operator":"contains"},
+                {"key":1.3,"value":"squiffy","operator":"contains"}
+            ]
+        }'
+        """
+        field_filters = []
+        for key, value, operator in keys:
+            field_filters.append({"key": key, "value": value, "operator": operator})
+        return json.dumps({"field_filters": field_filters})
 
     def get(self, endpoint: str, params: Optional[dict] = None):
         """
@@ -174,7 +184,6 @@ class GravityForms:
         if params:
             for key, value in params.items():
                 param_string += f"{key}={value}&"
-
         try:
             response = self.session.get(self.base_url + endpoint + param_string)
             return response.json()
@@ -230,3 +239,10 @@ class GravityForms:
         response = self.get(f"/entries/{entry_id}")
         entry = Entry(**response)
         return entry
+
+    def search_entry(self, field_filters: str, form_id: int):
+        response = self.get(f"/forms/{form_id}/entries", params={"search": field_filters})
+        entries = []
+        for entry in response.get("entries"):
+            entries.append(Entry(**entry))
+        return entries
