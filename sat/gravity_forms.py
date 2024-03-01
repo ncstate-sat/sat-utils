@@ -213,7 +213,7 @@ class GravityForms:
         entry = Form(**response)
         return entry
 
-    def get_entries(self, page: int = 1, page_size: int = 20, form_id: Optional[str] = None):
+    def get_entries(self, page: int = 1, page_size: int = 20, form_id: Optional[int] = None):
         """
         Gets and returns a list of entries.
         """
