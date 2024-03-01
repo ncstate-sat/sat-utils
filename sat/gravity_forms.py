@@ -8,7 +8,7 @@ Two required environment variables:
 
 import json
 import os
-from typing import Optional
+from typing import Optional, Union
 
 import oauthlib
 from requests.exceptions import RequestException
@@ -24,7 +24,7 @@ class Form:
     A form object from GravityForms.
     """
 
-    id: str
+    id: Union[int, str]
     title: str
     description: str
     date_created: str
@@ -65,7 +65,7 @@ class Entry:
     An entry object from GravityForms.
     """
 
-    id: str
+    id: Union[int, str]
     form_id: str
     created_by: str
     date_created: str
