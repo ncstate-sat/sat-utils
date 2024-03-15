@@ -16,5 +16,4 @@ lab:
 
 setup:
 	@echo 'Setting up the environment...'
-	pip config --site set global.extra-index-url https://pypi.ehps.ncsu.edu/
 	make install-dev

@@ -9,10 +9,7 @@ This repository contains a collection of shared utility functions.
 
 ```shell
 # Install the package from private PyPI (CLI)
-$ pip install -i https://pypi.ehps.ncsu.edu sat-utils
-
-# Install the package from private PyPI (requirements.txt)
-$ pip install -r requirements.txt --extra-index-url https://pypi.ehps.ncsu.edu
+$ pip install sat-utils
 ```
 
 ## Usage
