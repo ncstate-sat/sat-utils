@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "sat-utils"
-version = "1.4.0"
+version = "1.4.2"
 authors = [
     { name="Ryan Semmler", email="rsemmle@ncsu.edu" },
     { name="Shawn Taylor", email="staylor8@ncsu.edu" },
@@ -16,8 +16,8 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.9"
 dependencies = [
-  "slack-sdk>=3.21.0, <4.0.0",
-  "requests>=2.29.0, <3.0.0",
+  "slack-sdk==3.27.1",
+  "requests==2.31.0",
   "cx_Oracle==8.3.0",
   "oracledb==2.0.1",
   "pyodbc==5.1.0",
@@ -44,7 +44,7 @@ dev = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.ncsu.edu/SAT/sat-utils"
+"Homepage" = "https://github.com/ncstate-sat/sat-utils"
 
 [tool.flit.module]
 name = "sat"
@@ -57,7 +57,7 @@ include = '\.pyi?$'
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 select = ["E", "F", "W", "I001"]
-src = ["clearance_service"]
+src = ["sat"]
 ignore = []
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
