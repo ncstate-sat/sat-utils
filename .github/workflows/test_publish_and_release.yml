@@ -4,7 +4,7 @@ on:
   # PR merges count as pushes
   push:
     branches:
-      - ADHOC-publish-to-pypi
+      - main
   pull_request:
   workflow_dispatch:
 
