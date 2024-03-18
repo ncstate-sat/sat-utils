@@ -13,6 +13,8 @@ env:
   SLACK_UPDATES: true
   SLACK_CHANNEL_ID: C05Q5KLUW6Q
   RELEASE_REPO: https://github.com/ncstate-sat/sat-utils/
+  FLIT_USERNAME: DUMMY
+  FLIT_PASSWORD: DUMMY
 
 jobs:
   run_tests:
