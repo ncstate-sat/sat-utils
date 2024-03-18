@@ -45,19 +45,19 @@ jobs:
 
       - name: Setup Virtual Environment
         run: |
-          python -m venv venv
-          source venv/bin/activate
+          python -m venv /tmp/venv
+          source /tmp/venv/bin/activate
           make setup
 
       - name: Run Pre-commit
         run: |
-          source venv/bin/activate
+          source /tmp/venv/bin/activate
           pre-commit install
           pre-commit run --all
 
       - name: Run Tests
         run: |
-          source venv/bin/activate
+          source /tmp/venv/bin/activate
           pytest
 
       - name: Send Failure Message on Slack if Tests Fail
@@ -126,17 +126,16 @@ jobs:
             requirements-local-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-
 
       - name: Setup Virtual Environment
-        run: python -m venv venv
+        run: python -m venv /tmp/venv
 
       - name: Configure pip
         run: |
-          source venv/bin/activate
+          source /tmp/venv/bin/activate
           make setup
 
       - name: Build and Publish
         run: |
-          source venv/bin/activate
-          ls -la
+          source /tmp/venv/bin/activate
           flit publish
 
       - name: Send Failure Message on Slack if Build/Publish Fails
