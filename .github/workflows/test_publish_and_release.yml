@@ -14,6 +14,7 @@ env:
   SLACK_CHANNEL_ID: C05Q5KLUW6Q
   RELEASE_REPO: https://github.com/ncstate-sat/sat-utils/
   FLIT_USERNAME: __token__
+  FLIT_PASSWORD: ${{ secrets.PYPI_TOKEN }}
 
 jobs:
   run_tests:
