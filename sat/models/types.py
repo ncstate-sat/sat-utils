@@ -1,4 +1,4 @@
-from pydantic import BeforeValidator
+from pydantic import AfterValidator
 from typing_extensions import Annotated
 
 
@@ -11,4 +11,4 @@ def validate_campus_id(value):
         raise ValueError("Campus ID must be 9 characters long")
 
 
-CAMPUS_ID = Annotated[str, BeforeValidator(validate_campus_id)]
+CAMPUS_ID = Annotated[str, AfterValidator(validate_campus_id)]

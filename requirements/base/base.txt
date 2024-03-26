@@ -16,15 +16,21 @@ cryptography==42.0.5
     # via oracledb
 cx-oracle==8.3.0
     # via sat-utils (pyproject.toml)
+dnspython==2.6.1
+    # via email-validator
+email-validator==2.1.1
+    # via pydantic
 idna==3.6
-    # via requests
+    # via
+    #   email-validator
+    #   requests
 oauthlib==3.2.2
     # via requests-oauthlib
 oracledb==2.0.1
     # via sat-utils (pyproject.toml)
 pycparser==2.21
     # via cffi
-pydantic==2.6.4
+pydantic[email]==2.6.4
     # via sat-utils (pyproject.toml)
 pydantic-core==2.16.3
     # via pydantic

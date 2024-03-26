@@ -7,30 +7,27 @@ from pydantic.dataclasses import dataclass
 from sat.models.types import CAMPUS_ID
 
 
-@dataclass
-class Clearance:
+class Clearance(BaseModel):
     name: str
     object_id: int
     guid: str
 
 
-@dataclass
-class Credential:
+class Credential(BaseModel):
     card_number: int
     patron_id: int
 
 
-@dataclass
-class StudentPlanInfo:
-    academic_career: Optional[str]
-    program: Optional[str]
-    program_descr: Optional[str]
-    plan: Optional[str]
-    plan_descr: Optional[str]
-    sub_plan: Optional[str]
-    sub_plan_descr: Optional[str]
-    completion_term: Optional[int]
-    enrollment_term: Optional[int]
+class StudentPlanInfo(BaseModel):
+    academic_career: Optional[str] = ""
+    program: Optional[str] = ""
+    program_descr: Optional[str] = ""
+    plan: Optional[str] = ""
+    plan_descr: Optional[str] = ""
+    sub_plan: Optional[str] = ""
+    sub_plan_descr: Optional[str] = ""
+    completion_term: Optional[int] = int()
+    enrollment_term: Optional[int] = int()
 
 
 @dataclass
@@ -48,31 +45,30 @@ AFFILIATE_TYPES = Enum("AFFILIATE_TYPES", ["Visitor", "Self Pay" "Contractor", "
 
 class Person(BaseModel):
     first_name: str
-    middle_name: Optional[str]
+    middle_name: Optional[str] = ""
     last_name: str
 
 
-class NCSUStudent(Person):
+class NCSUPerson(Person):
     campus_id: CAMPUS_ID
     email: EmailStr
     active: bool
-    plan: Optional[List[StudentPlanInfo]]
 
 
-class NCSUEmployee(Person):
-    campus_id: CAMPUS_ID
-    email: EmailStr
-    active: bool
+class NCSUStudent(NCSUPerson):
+    plan: Optional[List[StudentPlanInfo]] = list()
+
+
+class NCSUEmployee(NCSUPerson):
     supervisor_id: CAMPUS_ID
     department_id: int
-    history: Optional[List[EmployeeHistory]]
+    history: Optional[List[EmployeeHistory]] = list()
 
 
 class NCSUAffiliate(Person):
-    campus_id: CAMPUS_ID
     email: EmailStr
     active: bool
-    sponsor_id: CAMPUS_ID
+    sponsor_email: EmailStr
     type: AFFILIATE_TYPES
 
 
@@ -86,9 +82,9 @@ class CCUREPersonnel(BaseModel):
 
 
 class SATPerson(BaseModel):
-    employee: Optional[NCSUEmployee]
-    student: Optional[NCSUStudent]
-    affiliate: Optional[NCSUAffiliate]
-    acs: Optional[CCUREPersonnel]
-    clearances: Optional[List[Clearance]]
-    credentials: Optional[List[Credential]]
+    employee: Optional[NCSUEmployee] = dict()
+    student: Optional[NCSUStudent] = dict()
+    affiliate: Optional[NCSUAffiliate] = dict()
+    acs: Optional[CCUREPersonnel] = dict()
+    clearances: Optional[List[Clearance]] = list()
+    credentials: Optional[List[Credential]] = list()
