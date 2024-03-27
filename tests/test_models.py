@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 from sat.models.people import (
     AFFILIATE_TYPES,
     CCUREPersonnel,
@@ -250,3 +251,41 @@ def test_sat_person_credentials(credential):
     }
     sat_person = SATPerson(credentials=[credentials])
     assert sat_person.model_dump() == expected
+
+
+def test_sat_person_invalid():
+    with pytest.raises(ValidationError):
+        SATPerson(employee=[1, 2, 3])
+
+
+def test_campus_id_validation_not_int():
+    with pytest.raises(ValidationError, match="Campus ID must be a parsable number"):
+        NCSUStudent(
+            first_name="John",
+            last_name="Public",
+            campus_id="12345678a",
+            email="jp@example.com",
+            active=True,
+        )
+
+
+def test_campus_id_validation_greater_9_chars():
+    with pytest.raises(ValidationError, match="Campus ID must be 9 characters long"):
+        NCSUStudent(
+            first_name="John",
+            last_name="Public",
+            campus_id="12345678746",
+            email="jp@example.com",
+            active=True,
+        )
+
+
+def test_campus_id_validation_less_than_9_chars():
+    with pytest.raises(ValidationError, match="Campus ID must be 9 characters long"):
+        NCSUStudent(
+            first_name="John",
+            last_name="Public",
+            campus_id="123456",
+            email="jp@example.com",
+            active=True,
+        )

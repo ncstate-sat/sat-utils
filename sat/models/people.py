@@ -2,7 +2,6 @@ from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel, EmailStr, NaiveDatetime
-from pydantic.dataclasses import dataclass
 
 from sat.models.types import CAMPUS_ID
 
@@ -30,8 +29,7 @@ class StudentPlanInfo(BaseModel):
     enrollment_term: Optional[int] = int()
 
 
-@dataclass
-class EmployeeHistory:
+class EmployeeHistory(BaseModel):
     empl_status: str
     supervisor_id: str
     effective_date: Optional[str]

@@ -7,7 +7,7 @@ def validate_campus_id(value):
         int(value)
     except ValueError:
         raise ValueError("Campus ID must be a parsable number")
-    if len(str(value).zfill(9)) != 9:
+    if len(str(value)) != 9:
         raise ValueError("Campus ID must be 9 characters long")
 
 
