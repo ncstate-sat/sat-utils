@@ -71,7 +71,13 @@ class NCSUAffiliate(Person):
 
 
 class CCUREPersonnel(BaseModel):
-    campus_id: CAMPUS_ID
+    """CCURE Personnel Model
+    Though this is called Personnel, it can represent non-persons as well.
+    They are all considered personnel in CCURE.
+    Non-persons won't have a campus_id.
+    """
+
+    campus_id: Optional[CAMPUS_ID] = ""
     object_id: int
     guid: str
     name: str
@@ -86,3 +92,9 @@ class SATPerson(BaseModel):
     acs: Optional[CCUREPersonnel] = dict()
     clearances: Optional[List[Clearance]] = list()
     credentials: Optional[List[Credential]] = list()
+
+    def add_clearance(self, clearance: Clearance):
+        self.clearances.append(clearance)
+
+    def add_credential(self, credential: Credential):
+        self.credentials.append(credential)
