@@ -240,8 +240,15 @@ class GravityForms:
         entry = Entry(**response)
         return entry
 
-    def search_entry(self, field_filters: str, form_id: int):
-        response = self.get(f"/forms/{form_id}/entries", params={"search": field_filters})
+    def search_entry(self, field_filters: str, form_id: int, page: int = 1, page_size: int = 20):
+        response = self.get(
+            f"/forms/{form_id}/entries",
+            params={
+                "search": field_filters,
+                "paging[current_page]": page,
+                "paging[page_size]": page_size,
+            },
+        )
         entries = []
         for entry in response.get("entries"):
             entries.append(Entry(**entry))
