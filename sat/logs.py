@@ -14,6 +14,15 @@ class SATLogger:
         self.handler.setFormatter(self.formatter)
         self.logger.addHandler(self.handler)
 
+    def __str__(self):
+        return self.logger.name
+
+    def get_config(self) -> dict:
+        """
+        Get the logger's DictConfig.
+        """
+        pass
+
     def add_handlers(self, handlers: list[(logging.Handler, logging.Formatter)]) -> None:
         """
         Add additional handlers to the logger.
