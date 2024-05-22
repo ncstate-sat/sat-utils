@@ -1,24 +1,12 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import UUID4, BaseModel
+
+from sat.models.ccure.types import ASSET_TYPES
 
 
 class Asset(BaseModel):
     object_id: int
     name: str
-    guid: str
-    type: str
-
-
-class Door(BaseModel):
-    object_id: int
-    name: str
-    guid: str
-    description: Optional[str] = ""
-
-
-class Elevator(BaseModel):
-    object_id: int
-    name: str
-    guid: str
-    description: Optional[str] = ""
+    guid: UUID4
+    asset_type: Optional[ASSET_TYPES]
