@@ -1,6 +1,9 @@
 import logging
 import os
 
+import requests
+from elasticsearch import Elasticsearch
+
 
 class SATLogger:
     def __init__(self, name: str = __name__, level: int = logging.INFO) -> None:
@@ -42,3 +45,27 @@ class SATLogger:
 
     def critical(self, msg: str) -> None:
         self.logger.critical(msg)
+
+def get_elasticsearch_client(elastic_url: str, username: str, password: str) -> Elasticsearch:
+    return Elasticsearch(
+        elastic_url,
+        basic_auth=(username, password)
+    )
+
+
+class ElasticClientHandler(logging.Handler):
+
+    def __init__(self, client: Elasticsearch, index_name: str, document_labels: dict = None, level=logging.NOTSET):
+        super().__init__(level)
+        self.client = client
+        self.index_name = index_name
+        self.document_labels = document_labels
+
+    def emit(self, record):
+        formatted_data = self.format(record)
+
+        document = {"log_message": formatted_data, "cid": record.extra.get('cid')}
+        if self.document_lables:
+            document.update(self.document_labels)
+
+        self.client.index(index=self.index_name, document=document)
