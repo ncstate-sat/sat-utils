@@ -72,32 +72,49 @@ class ElasticModuleFilter(logging.Filter):
 
 def setup_sat_logging_with_defaults():
 
-    elastic_url = os.environ['ELASTIC_URL']
-    elastic_username = os.environ['ELASTIC_USERNAME']
-    elastic_password = os.environ['ELASTIC_PASSWORD']
-    elastic_index = os.environ['ELASTIC_INDEX']
 
-    app_name = os.environ['APP_NAME']
+    # Elastic loging feature flag defaults to false, don't want to blow up local development if no environment variables are set
+    enable_elastic_string = os.getenv('ELASTIC_ENABLE_LOGGING', '')
+    if enable_elastic_string.lower() == 'true':
+        enable_elastic_logging = True
+    else:
+        enable_elastic_logging = False
 
-    elastic_client = get_elasticsearch_client(elastic_url, elastic_username, elastic_password)
+    if enable_elastic_logging:
+        elastic_url = os.environ['ELASTIC_URL']
+        elastic_username = os.environ['ELASTIC_USERNAME']
+        elastic_password = os.environ['ELASTIC_PASSWORD']
+        elastic_index = os.environ['ELASTIC_INDEX']
+        app_name = os.environ['APP_NAME']
+        elastic_client = get_elasticsearch_client(elastic_url, elastic_username, elastic_password)
+    else:
+        app_name = os.getenv('APP_NAME')  # If logging without elastic enabled, APP_NAME is optional
+        elastic_client = None
+        elastic_index = None
 
-    setup_sat_logging(elastic_client, elastic_index, app_name)
 
-def setup_sat_logging(client: Elasticsearch, index_name: str, app_name: str, loglevel: int = logging.INFO):
+    log_level_string = os.getenv('LOGLEVEL', 'INFO')
+    log_level = getattr(logging, log_level_string.upper())
+
+
+    setup_sat_logging(elastic_client, elastic_index, app_name, enable_elastic_logging, log_level)
+
+def setup_sat_logging(client: Elasticsearch, index_name: str, app_name: str, enable_elastic_logging, loglevel: int = logging.INFO):
+
+    log_handlers = [logging.StreamHandler()]
 
     if os.getenv('DEBUG'):
         loglevel = logging.DEBUG
 
-    elastic_handler = ElasticClientHandler(client, index_name=index_name, document_labels={"app": app_name}, level=loglevel)
-    elastic_handler.addFilter(ElasticModuleFilter())
+    if enable_elastic_logging:
+        elastic_handler = ElasticClientHandler(client, index_name=index_name, document_labels={"app": app_name}, level=loglevel)
+        elastic_handler.addFilter(ElasticModuleFilter())
+        log_handlers.append(elastic_handler)
 
     logging.basicConfig(
         level=loglevel,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[
-            logging.StreamHandler(),
-            elastic_handler
-        ]
+        handlers=log_handlers
     )
 
 class SATLogger:
@@ -107,10 +124,11 @@ class SATLogger:
             self.logger.setLevel(logging.DEBUG)
         else:
             self.logger.setLevel(level)
-        self.formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-        self.handler = logging.StreamHandler()
-        self.handler.setFormatter(self.formatter)
-        self.logger.addHandler(self.handler)
+        # self.formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        # self.handler = logging.StreamHandler()
+        # self.handler.setFormatter(self.formatter)
+        # self.logger.addHandler(self.handler)
+        setup_sat_logging_with_defaults()
 
     def add_handlers(self, handlers: list[(logging.Handler, logging.Formatter)]) -> None:
         """
