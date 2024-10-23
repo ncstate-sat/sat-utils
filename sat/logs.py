@@ -1,9 +1,10 @@
 import logging
 import os
 from unittest.mock import MagicMock
+import time
 
-import requests
 from elasticsearch import Elasticsearch, BadRequestError
+from elasticsearch.helpers import bulk
 
 
 class SingletonLoggerMixin(object):
@@ -16,37 +17,31 @@ class SingletonLoggerMixin(object):
         # Prevents multiple setup function calls
         if not isinstance(cls._instance, cls):
             cls._instance = object.__new__(cls)
-            cls.client_mock = MagicMock()
-            setup_sat_logging(client=cls.client_mock, index_name='test', app_name='test')
+            setup_sat_logging_with_defaults()
 
         return cls._instance
 
 
-class SATLoggerSingleton(SingletonLoggerMixin):
+class SATLogger(SingletonLoggerMixin):
     def __init__(self, name: str = __name__, level: int = logging.INFO) -> None:
         self.logger = logging.getLogger(name)
 
-    def debug(self, msg: str, *args, **kwargs) -> None:
-        self.logger.debug(msg, *args, **kwargs)
+    def add_handlers(self, handlers: list[(logging.Handler, logging.Formatter)]) -> None:
+        """
+        Add additional handlers to the logger.
+        Handlers should be a list of tuples with a logging.Handler and an
+        optional logging.Formatter.
+        """
 
-    def info(self, msg: str, *args, **kwargs) -> None:
-        self.logger.info(msg, *args, **kwargs)
+        self.logger.warning('Adding handlers to this instance of the logger only, will not persist throughout project. Update logging config to persist changes.')
 
-    def warning(self, msg: str, *args, **kwargs) -> None:
-        self.logger.warning(msg, *args, **kwargs)
-
-    def error(self, msg: str, *args, **kwargs) -> None:
-        self.logger.error(msg, *args, **kwargs)
-
-    def critical(self, msg: str, *args, **kwargs) -> None:
-        self.logger.critical(msg, *args, **kwargs)
-
-
-class SATLoggerStripped:
-
-    def __init__(self, name: str = __name__,) -> None:
-        self.logger = logging.getLogger(name)
-
+        for tup in handlers:
+            handler, formatter = tup
+            if formatter:
+                handler.setFormatter(formatter)
+            else:
+                handler.setFormatter(self.formatter)
+            self.logger.addHandler(handler)
 
     def debug(self, msg: str, *args, **kwargs) -> None:
         self.logger.debug(msg, *args, **kwargs)
@@ -62,7 +57,6 @@ class SATLoggerStripped:
 
     def critical(self, msg: str, *args, **kwargs) -> None:
         self.logger.critical(msg, *args, **kwargs)
-    
 
 
 class ElasticModuleFilter(logging.Filter):
@@ -99,15 +93,15 @@ def setup_sat_logging_with_defaults():
 
     setup_sat_logging(elastic_client, elastic_index, app_name, enable_elastic_logging, log_level)
 
-def setup_sat_logging(client: Elasticsearch, index_name: str, app_name: str, enable_elastic_logging, loglevel: int = logging.INFO):
+def setup_sat_logging(client: Elasticsearch, index_name: str, app_name: str, enable_elastic_logging, loglevel: int = logging.INFO, batch_size: int=100, batch_time: float=2.):
 
-    log_handlers = [logging.StreamHandler()]
+    log_handlers = [logging.StreamHandler(), logging.StreamHandler(), logging.StreamHandler()]
 
     if os.getenv('DEBUG'):
         loglevel = logging.DEBUG
 
     if enable_elastic_logging:
-        elastic_handler = ElasticClientHandler(client, index_name=index_name, document_labels={"app": app_name}, level=loglevel)
+        elastic_handler = ElasticClientHandler(client, index_name=index_name, document_labels={"app": app_name}, level=loglevel, batch_size=batch_size, batch_time=batch_time)
         elastic_handler.addFilter(ElasticModuleFilter())
         log_handlers.append(elastic_handler)
 
@@ -117,47 +111,6 @@ def setup_sat_logging(client: Elasticsearch, index_name: str, app_name: str, ena
         handlers=log_handlers
     )
 
-class SATLogger:
-    def __init__(self, name: str = __name__, level: int = logging.INFO) -> None:
-        self.logger = logging.getLogger(name)
-        if os.getenv("DEBUG"):
-            self.logger.setLevel(logging.DEBUG)
-        else:
-            self.logger.setLevel(level)
-        # self.formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-        # self.handler = logging.StreamHandler()
-        # self.handler.setFormatter(self.formatter)
-        # self.logger.addHandler(self.handler)
-        setup_sat_logging_with_defaults()
-
-    def add_handlers(self, handlers: list[(logging.Handler, logging.Formatter)]) -> None:
-        """
-        Add additional handlers to the logger.
-        Handlers should be a list of tuples with a logging.Handler and an
-        optional logging.Formatter.
-        """
-        for tup in handlers:
-            handler, formatter = tup
-            if formatter:
-                handler.setFormatter(formatter)
-            else:
-                handler.setFormatter(self.formatter)
-            self.logger.addHandler(handler)
-
-    def debug(self, msg: str, *args, **kwargs) -> None:
-        self.logger.debug(msg, *args, **kwargs)
-
-    def info(self, msg: str, *args, **kwargs) -> None:
-        self.logger.info(msg, *args, **kwargs)
-
-    def warning(self, msg: str, *args, **kwargs) -> None:
-        self.logger.warning(msg, *args, **kwargs)
-
-    def error(self, msg: str, *args, **kwargs) -> None:
-        self.logger.error(msg, *args, **kwargs)
-
-    def critical(self, msg: str, *args, **kwargs) -> None:
-        self.logger.critical(msg, *args, **kwargs)
 
 def get_elasticsearch_client(elastic_url: str, username: str, password: str) -> Elasticsearch:
     return Elasticsearch(
@@ -166,14 +119,17 @@ def get_elasticsearch_client(elastic_url: str, username: str, password: str) -> 
         verify_certs=False
     )
 
-
 class ElasticClientHandler(logging.Handler):
 
-    def __init__(self, client: Elasticsearch, index_name: str, document_labels: dict = None, level=logging.NOTSET):
+    def __init__(self, client: Elasticsearch, index_name: str, document_labels: dict = None, level=logging.NOTSET, batch_size: int=10, batch_time: float=5.):
         super().__init__(level)
         self.client = client
         self.index_name = index_name
         self.document_labels = document_labels
+        self.batch_size = batch_size
+        self.batch_time = batch_time
+        self._queue = []
+        self._batch_start_time = time.time()
 
         self.addFilter(ElasticModuleFilter())  # Need a filter here to prevent the elasticsearch module from recursively sending logging calls
 
@@ -197,4 +153,19 @@ class ElasticClientHandler(logging.Handler):
         if self.document_labels:
             document.update(self.document_labels)
 
-        self.client.index(index=self.index_name, document=document)
+        self._queue.append(document)
+
+        if len(self._queue) >= self.batch_size:
+            self.flush()
+        elif time.time() - self.batch_time >= self._batch_start_time:
+            self.flush()
+
+    def flush(self):
+        upload_result = bulk(self.client, self._queue)
+        self._queue = []
+        self._batch_start_time = time.time()
+        super().flush()
+
+    def close(self):
+        self.flush()
+        super().close()
