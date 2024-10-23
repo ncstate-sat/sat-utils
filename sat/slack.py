@@ -1,9 +1,10 @@
+import logging
+
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-from sat.logs import SATLogger
 
-logger = SATLogger(name=__name__)
+logger = logging.getLogger(__name__)
 
 
 class Slack:
