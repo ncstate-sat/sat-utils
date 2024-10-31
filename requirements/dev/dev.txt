@@ -4,7 +4,6 @@
 #
 #    pip-compile --extra=dev --output-file=requirements/dev/dev.txt pyproject.toml
 #
---extra-index-url https://pypi.ehps.ncsu.edu/
 
 aiofiles==22.1.0
     # via ypy-websocket
