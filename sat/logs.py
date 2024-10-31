@@ -1,22 +1,18 @@
 import logging
 import os
-from unittest.mock import MagicMock
 import time
-import sys
-from collections import deque
 
-from elasticsearch import Elasticsearch, BadRequestError
+from elasticsearch import BadRequestError, Elasticsearch
 from elasticsearch.helpers import bulk
 
 logger = logging.getLogger(__name__)
 
 
-class SingletonLoggerMixin(object):
+class SingletonLoggerMixin:
     _instance = None
     client_mock = None
 
     def __new__(cls, *args, **kwargs):
-
         # Only call this setup block the first time a SATLoggerSingleton is instantiated
         # Prevents multiple setup function calls
         if not isinstance(cls._instance, cls):
@@ -32,8 +28,9 @@ class SATLogger(SingletonLoggerMixin):
 
     The purpose for the mixin is to enable a logging.basicConfig setup to be called a single time,
     but to allow all the application files to continue to use the same logging setup syntax.
-    The singleton mixin will check to see if the setup function has already been called in the runtime,
-    and if not it calls the setup (initializing the Elastic logging handler and formatters).
+    The singleton mixin will check to see if the setup function has already been called in the
+    runtime, and if not it calls the setup
+    (initializing the Elastic logging handler and formatters).
     """
 
     def __init__(self, name: str = __name__, level: int = logging.INFO) -> None:
@@ -46,7 +43,10 @@ class SATLogger(SingletonLoggerMixin):
         optional logging.Formatter.
         """
 
-        self.logger.warning('Adding handlers to this instance of the logger only, will not persist throughout project. Update logging config to persist changes.')
+        self.logger.warning(
+            "Adding handlers to this instance of the logger only, "
+            "will not persist throughout project. Update logging config to persist changes."
+        )
 
         for tup in handlers:
             handler, formatter = tup
@@ -73,97 +73,119 @@ class SATLogger(SingletonLoggerMixin):
 
 
 class ElasticModuleFilter(logging.Filter):
-
     def filter(self, record):
-        top_module_name = record.name.split('.')[0]
-        return top_module_name not in ['elastic', 'elastic_transport']
+        top_module_name = record.name.split(".")[0]
+        return top_module_name not in ["elastic", "elastic_transport"]
+
 
 def setup_sat_logging_with_defaults():
     """
-    Sets up a basic logging config with an Elastic Client Handler using values from environment variables
+    Sets up a basic logging config with an Elastic Client Handler using values
+    from environment variables
 
     Depends on the following Environment Variables
-    ELASTIC_ENABLE_LOGGING: string value for booleans, `'True'` or `'False'`: Decides whether Elastic log handler
-    should be used, and also controls whether other needed configuration is checked for. Defaults to False
+    ELASTIC_ENABLE_LOGGING: string value for booleans,
+        `'True'` or `'False'`: Decides whether Elastic log handler
+        should be used, and also controls whether other needed configuration is checked for.
+        Defaults to False
 
-    ELASTIC_URL: str: url for the Elastic server including protocol and port, e.g. `'https://elk.example.com:9200`
+    ELASTIC_URL: str: url for the Elastic server including protocol and port,
+        e.g. `'https://elk.example.com:9200`
     ELASTIC_USERNAME: str: elastic username
     ELASTIC_PASSWORD: str: elastic password
     ELASTIC_INDEX: str: Name of the index this app should log to
     APP_NAME: str: Name of the app label included in the logs
     """
 
-    # Elastic loging feature flag defaults to false, don't want to blow up local development or tests if no environment variables are set
-    enable_elastic_string = os.getenv('ELASTIC_ENABLE_LOGGING', '')
-    if enable_elastic_string.lower() == 'true':
+    # Elastic loging feature flag defaults to false, don't want to blow up
+    # local development or tests if no environment variables are set
+    enable_elastic_string = os.getenv("ELASTIC_ENABLE_LOGGING", "")
+    if enable_elastic_string.lower() == "true":
         enable_elastic_logging = True
     else:
-        logger.warning('Elastic logging disabled, continuing without')
+        logger.warning("Elastic logging disabled, continuing without")
         enable_elastic_logging = False
 
     if enable_elastic_logging:
-        elastic_url = os.environ['ELASTIC_URL']
-        elastic_username = os.environ['ELASTIC_USERNAME']
-        elastic_password = os.environ['ELASTIC_PASSWORD']
-        elastic_index = os.environ['ELASTIC_INDEX']
-        app_name = os.environ['APP_NAME']
+        elastic_url = os.environ["ELASTIC_URL"]
+        elastic_username = os.environ["ELASTIC_USERNAME"]
+        elastic_password = os.environ["ELASTIC_PASSWORD"]
+        elastic_index = os.environ["ELASTIC_INDEX"]
+        app_name = os.environ["APP_NAME"]
         elastic_client = get_elasticsearch_client(elastic_url, elastic_username, elastic_password)
     else:
-        app_name = os.getenv('APP_NAME')  # If logging without elastic enabled, APP_NAME is optional
+        app_name = os.getenv("APP_NAME")  # If logging without elastic enabled, APP_NAME is optional
         elastic_client = None
         elastic_index = None
 
-
-    log_level_string = os.getenv('LOGLEVEL', 'INFO')
+    log_level_string = os.getenv("LOGLEVEL", "INFO")
     log_level = getattr(logging, log_level_string.upper())
-
 
     setup_sat_logging(elastic_client, elastic_index, app_name, enable_elastic_logging, log_level)
 
 
-def setup_sat_logging_bulk(client: Elasticsearch, index_name: str, app_name: str, enable_elastic_logging, loglevel: int = logging.INFO, batch_size: int=100, batch_time: float=2.):
-
+def setup_sat_logging_bulk(
+    client: Elasticsearch,
+    index_name: str,
+    app_name: str,
+    enable_elastic_logging,
+    loglevel: int = logging.INFO,
+    batch_size: int = 100,
+    batch_time: float = 2.0,
+):
     log_handlers = [logging.StreamHandler()]
 
-    if os.getenv('DEBUG'):
+    if os.getenv("DEBUG"):
         loglevel = logging.DEBUG
 
     if enable_elastic_logging:
-        elastic_handler = ElasticClientBulkHandler(client, index_name=index_name, document_labels={"app": app_name}, level=loglevel, batch_size=batch_size, batch_time=batch_time)
+        elastic_handler = ElasticClientBulkHandler(
+            client,
+            index_name=index_name,
+            document_labels={"app": app_name},
+            level=loglevel,
+            batch_size=batch_size,
+            batch_time=batch_time,
+        )
         elastic_handler.addFilter(ElasticModuleFilter())
         log_handlers.append(elastic_handler)
 
     logging.basicConfig(
         level=loglevel,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=log_handlers
+        handlers=log_handlers,
     )
 
-def setup_sat_logging(client: Elasticsearch, index_name: str, app_name: str, enable_elastic_logging, loglevel: int = logging.INFO):
 
+def setup_sat_logging(
+    client: Elasticsearch,
+    index_name: str,
+    app_name: str,
+    enable_elastic_logging,
+    loglevel: int = logging.INFO,
+):
     log_handlers = [logging.StreamHandler()]
 
-    if os.getenv('DEBUG'):
+    if os.getenv("DEBUG"):
         loglevel = logging.DEBUG
 
     if enable_elastic_logging:
-        elastic_handler = ElasticClientHandler(client, index_name=index_name, document_labels={"app": app_name}, level=loglevel)
+        elastic_handler = ElasticClientHandler(
+            client, index_name=index_name, document_labels={"app": app_name}, level=loglevel
+        )
         elastic_handler.addFilter(ElasticModuleFilter())
         log_handlers.append(elastic_handler)
 
     logging.basicConfig(
         level=loglevel,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=log_handlers
+        handlers=log_handlers,
     )
 
 
 def get_elasticsearch_client(elastic_url: str, username: str, password: str) -> Elasticsearch:
-    return Elasticsearch(
-        elastic_url,
-        basic_auth=(username, password),
-        verify_certs=True
-    )
+    return Elasticsearch(elastic_url, basic_auth=(username, password), verify_certs=True)
+
 
 class ElasticClientHandler(logging.Handler):
     """
@@ -173,12 +195,21 @@ class ElasticClientHandler(logging.Handler):
     if more throughput is needed use the Bulk Elastic handler
     """
 
-    def __init__(self, client: Elasticsearch, index_name: str, document_labels: dict = None, level=logging.NOTSET):
+    def __init__(
+        self,
+        client: Elasticsearch,
+        index_name: str,
+        document_labels: dict = None,
+        level=logging.NOTSET,
+    ):
         super().__init__(level)
         self.client = client
         self.index_name = index_name
         self.document_labels = document_labels
-        self.addFilter(ElasticModuleFilter())  # Need a filter here to prevent the elasticsearch module from recursively sending logging calls
+        self.addFilter(
+            ElasticModuleFilter()
+        )  # Need a filter here to prevent the elasticsearch module
+        # from recursively sending logging calls
 
         # Create index if none exists
         try:
@@ -188,7 +219,7 @@ class ElasticClientHandler(logging.Handler):
 
     def emit(self, record):
         formatted_data = self.format(record)
-        logger.debug('Elastic handler emitting')
+        logger.debug("Elastic handler emitting")
 
         # Explicitly handle messages where a CID field is not provided
         try:
@@ -209,21 +240,31 @@ class ElasticClientBulkHandler(ElasticClientHandler):
     Log Handler that sends log messages to an elastic server.
 
     This handler uses batch methods to increase performance for applications with a lot of logs.
-    Using this handler requires a call to `logging.shutdown` in your application entrypoint somewhere;
+    Using this handler requires a call to `logging.shutdown`
+    in your application entrypoint somewhere;
     the best way to implment that is using a `Try: Finally` block.
     If the logger isn't closed (either manually or via logging.shutdown),
     then the application might not be able to exit since the Elastic bulk
     client will continue to run a keep-alive thread until it is explicitly closed.
     """
 
-    def __init__(self, client: Elasticsearch, index_name: str, document_labels: dict = None, level=logging.NOTSET, batch_size: int=10, batch_time: float=5.):
+    def __init__(
+        self,
+        client: Elasticsearch,
+        index_name: str,
+        document_labels: dict = None,
+        level=logging.NOTSET,
+        batch_size: int = 10,
+        batch_time: float = 5.0,
+    ):
         super().__init__(client, index_name, document_labels, level)
         self.batch_size = batch_size
         self.batch_time = batch_time
         self._queue = []
         self._batch_start_time = time.time()
 
-        # Switching variable for using bulk, want to switch to single requests during shutdown to avoid weird
+        # Switching variable for using bulk, want to switch to single
+        # requests during shutdown to avoid weird
         # hanging issues caused by leaving elastic messages on the bulk queue
         self._use_bulk = True
 
@@ -232,7 +273,7 @@ class ElasticClientBulkHandler(ElasticClientHandler):
 
     def emit(self, record):
         formatted_data = self.format(record)
-        logger.debug('Elastic handler emitting')
+        logger.debug("Elastic handler emitting")
 
         # Explicitly handle messages where a CID field is not provided
         try:
@@ -246,7 +287,7 @@ class ElasticClientBulkHandler(ElasticClientHandler):
             document.update(self.document_labels)
 
         if self._use_bulk:
-            document.update({'_index': self.index_name})
+            document.update({"_index": self.index_name})
             self._queue.append(document)
 
             if len(self._queue) >= self.batch_size:
@@ -257,16 +298,16 @@ class ElasticClientBulkHandler(ElasticClientHandler):
             self.client.index(index=self.index_name, document=document)
 
     def flush(self):
-        logger.debug('Flushing')
+        logger.debug("Flushing")
         if self._queue and self._use_bulk:
             bulk(self.client, self._queue)
-            logger.debug('Finished uploading to elastic')
+            logger.debug("Finished uploading to elastic")
         self._queue = []
         self._batch_start_time = time.time()
         super().flush()
 
     def close(self):
-        logger.debug('Closing')
+        logger.debug("Closing")
         self.flush()
         self.client.close()
         super().close()

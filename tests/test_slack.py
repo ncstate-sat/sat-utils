@@ -1,8 +1,7 @@
 import logging
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from sat.slack import Slack, SlackApiError
-from sat.logs import setup_sat_logging
 
 
 def mock_slack_response():

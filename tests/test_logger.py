@@ -9,6 +9,7 @@ TMP_FILE = "/tmp/test.log"
 def test_default_logger(caplog):
     """Test the default logger"""
     from sat.logs import SATLogger
+
     caplog.set_level(logging.INFO)
 
     logger = SATLogger()

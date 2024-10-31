@@ -1,24 +1,25 @@
-from unittest.mock import MagicMock, patch
-import datetime
 import logging
+from unittest.mock import MagicMock
 
 import pytest
-
 from sat.logs import ElasticClientHandler
 
 
 @pytest.fixture
 def log_stuff(request):
     mock_client = MagicMock()
-    elastic_handler = ElasticClientHandler(client=mock_client, index_name='test', document_labels={'app': 'test'}, level=logging.INFO)
+    elastic_handler = ElasticClientHandler(
+        client=mock_client, index_name="test", document_labels={"app": "test"}, level=logging.INFO
+    )
     elastic_handler.setLevel(logging.INFO)
-    test_formatter = logging.Formatter('%(message)s')
+    test_formatter = logging.Formatter("%(message)s")
     elastic_handler.setFormatter(test_formatter)
     logger = logging.getLogger(request.node.name)
     logger.setLevel(logging.INFO)
     logger.addHandler(elastic_handler)
 
     return logger, mock_client
+
 
 def test_similarly_named_module_log_sent(log_stuff):
     """
@@ -32,5 +33,5 @@ def test_similarly_named_module_log_sent(log_stuff):
     client code/other modules that have names like `elastic`
     """
     test_logger, mock_elastic_client = log_stuff
-    test_logger.info('test 2 message 1', extra={'cid': 'test-cid'})
+    test_logger.info("test 2 message 1", extra={"cid": "test-cid"})
     mock_elastic_client.index.assert_called()
