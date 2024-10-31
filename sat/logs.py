@@ -27,6 +27,15 @@ class SingletonLoggerMixin(object):
 
 
 class SATLogger(SingletonLoggerMixin):
+    """
+    Logging wrapper for SAT applications.
+
+    The purpose for the mixin is to enable a logging.basicConfig setup to be called a single time,
+    but to allow all the application files to continue to use the same logging setup syntax.
+    The singleton mixin will check to see if the setup function has already been called in the runtime,
+    and if not it calls the setup (initializing the Elastic logging handler and formatters).
+    """
+
     def __init__(self, name: str = __name__, level: int = logging.INFO) -> None:
         self.logger = logging.getLogger(name)
 
@@ -70,10 +79,21 @@ class ElasticModuleFilter(logging.Filter):
         return top_module_name not in ['elastic', 'elastic_transport']
 
 def setup_sat_logging_with_defaults():
-    print('setting up sat logger with defaults')
+    """
+    Sets up a basic logging config with an Elastic Client Handler using values from environment variables
 
+    Depends on the following Environment Variables
+    ELASTIC_ENABLE_LOGGING: string value for booleans, `'True'` or `'False'`: Decides whether Elastic log handler
+    should be used, and also controls whether other needed configuration is checked for. Defaults to False
 
-    # Elastic loging feature flag defaults to false, don't want to blow up local development if no environment variables are set
+    ELASTIC_URL: str: url for the Elastic server including protocol and port, e.g. `'https://elk.example.com:9200`
+    ELASTIC_USERNAME: str: elastic username
+    ELASTIC_PASSWORD: str: elastic password
+    ELASTIC_INDEX: str: Name of the index this app should log to
+    APP_NAME: str: Name of the app label included in the logs
+    """
+
+    # Elastic loging feature flag defaults to false, don't want to blow up local development or tests if no environment variables are set
     enable_elastic_string = os.getenv('ELASTIC_ENABLE_LOGGING', '')
     if enable_elastic_string.lower() == 'true':
         enable_elastic_logging = True
