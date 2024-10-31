@@ -1,10 +1,10 @@
 from unittest.mock import MagicMock, patch
-import datetime
+import os
 import logging
 
 import pytest
 
-from sat.logs import ElasticClientHandler
+from sat.logs import ElasticClientHandler, setup_sat_logging_with_defaults
 
 
 @pytest.fixture
@@ -19,6 +19,26 @@ def log_stuff(request):
     logger.addHandler(elastic_handler)
 
     return logger, mock_client
+
+@patch.dict(os.environ, {"ELASTIC_ENABLE_LOGGING": "False"}, clear=True)
+def test_default_setup_no_elastic():
+    setup_sat_logging_with_defaults()
+
+@patch.dict(os.environ, {"ELASTIC_ENABLE_LOGGING": "True", 'ELASTIC_URL': 'test-url',
+                         'ELASTIC_USERNAME': 'test-user',
+                         'ELASTIC_INDEX': 'test-index', 'APP_NAME': 'test-app-name'}, clear=True)
+def test_fails_when_missing_required_env():
+    """When Elastic is enabled, but username isn't defined, setup should raise a key error"""
+    with pytest.raises(KeyError):
+        setup_sat_logging_with_defaults()
+
+@patch.dict(os.environ, {"ELASTIC_ENABLE_LOGGING": "True", 'ELASTIC_URL': 'test-url',
+                         'ELASTIC_USERNAME': 'test-user', 'ELASTIC_PASSWORD': 'test-pass',
+                         'ELASTIC_INDEX': 'test-index', 'APP_NAME': 'test-app-name'}, clear=True)
+def test_default_setup_with_elastic():
+    with patch('sat.logs.Elasticsearch') as elastic_mock:
+        setup_sat_logging_with_defaults()
+        elastic_mock.assert_called_with('test-url', basic_auth=('test-user', 'test-pass'), verify_certs=True)
 
 
 def test_without_fixture():

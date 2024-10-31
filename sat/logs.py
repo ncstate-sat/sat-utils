@@ -101,29 +101,9 @@ def setup_sat_logging_with_defaults():
     setup_sat_logging(elastic_client, elastic_index, app_name, enable_elastic_logging, log_level)
 
 
-def shutdown_logging_on_exception(exc_type, exc_value, exc_traceback):
-    """Shuts down logger before calling normal exception handling
-
-    This is required because if the ElasticClientHandler ends up having any other messages assigned to its queue
-    while the
-
-    """
-    root_logger = logging.getLogger()
-    elastic_handlers = [handler for handler in root_logger.handlers if isinstance(handler, ElasticClientBulkHandler)]
-    for elastic_handler in elastic_handlers:
-        elastic_handler.flush()
-        elastic_handler.set_use_bulk(False)
-
-
-    # logging.shutdown()
-    sys.__excepthook__(exc_type, exc_value, exc_traceback)
-
 def setup_sat_logging_bulk(client: Elasticsearch, index_name: str, app_name: str, enable_elastic_logging, loglevel: int = logging.INFO, batch_size: int=100, batch_time: float=2.):
 
     log_handlers = [logging.StreamHandler()]
-
-    # Set up custom exception hook
-    sys.excepthook = shutdown_logging_on_exception
 
     if os.getenv('DEBUG'):
         loglevel = logging.DEBUG
@@ -162,10 +142,16 @@ def get_elasticsearch_client(elastic_url: str, username: str, password: str) -> 
     return Elasticsearch(
         elastic_url,
         basic_auth=(username, password),
-        verify_certs=False
+        verify_certs=True
     )
 
 class ElasticClientHandler(logging.Handler):
+    """
+    Log Handler that sends logs directly to an elastic index
+
+    Does this by making an index call at the point of every logging call,
+    if more throughput is needed use the Bulk Elastic handler
+    """
 
     def __init__(self, client: Elasticsearch, index_name: str, document_labels: dict = None, level=logging.NOTSET):
         super().__init__(level)
@@ -199,6 +185,16 @@ class ElasticClientHandler(logging.Handler):
 
 
 class ElasticClientBulkHandler(ElasticClientHandler):
+    """
+    Log Handler that sends log messages to an elastic server.
+
+    This handler uses batch methods to increase performance for applications with a lot of logs.
+    Using this handler requires a call to `logging.shutdown` in your application entrypoint somewhere;
+    the best way to implment that is using a `Try: Finally` block.
+    If the logger isn't closed (either manually or via logging.shutdown),
+    then the application might not be able to exit since the Elastic bulk
+    client will continue to run a keep-alive thread until it is explicitly closed.
+    """
 
     def __init__(self, client: Elasticsearch, index_name: str, document_labels: dict = None, level=logging.NOTSET, batch_size: int=10, batch_time: float=5.):
         super().__init__(client, index_name, document_labels, level)
