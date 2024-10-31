@@ -209,7 +209,7 @@ class ElasticClientBulkHandler(ElasticClientHandler):
 
         # Switching variable for using bulk, want to switch to single requests during shutdown to avoid weird
         # hanging issues caused by leaving elastic messages on the bulk queue
-        self._use_bulk = False
+        self._use_bulk = True
 
     def set_use_bulk(self, use_bulk):
         self._use_bulk = use_bulk
