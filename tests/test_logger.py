@@ -10,6 +10,8 @@ def test_default_logger(caplog):
     """Test the default logger"""
     from sat.logs import SATLogger
 
+    caplog.set_level(logging.INFO)
+
     logger = SATLogger()
     logger.info("Test message")
     assert "Test message" in caplog.text
@@ -22,6 +24,7 @@ def test_default_logger(caplog):
 @mock.patch.dict(os.environ, {"DEBUG": "1"}, clear=True)
 def test_debug_logger(caplog):
     """Test the debug logger"""
+    caplog.set_level(logging.DEBUG)
     from sat.logs import SATLogger
 
     logger = SATLogger()
@@ -31,6 +34,7 @@ def test_debug_logger(caplog):
 
 def test_add_handlers(caplog):
     """Test adding handlers to the logger"""
+    caplog.set_level(logging.INFO)
     from sat.logs import SATLogger
 
     logger = SATLogger()

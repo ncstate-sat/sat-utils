@@ -4,10 +4,13 @@
 #
 #    pip-compile --output-file=requirements/base/base.txt pyproject.toml
 #
+
 annotated-types==0.6.0
     # via pydantic
 certifi==2024.2.2
-    # via requests
+    # via
+    #   elastic-transport
+    #   requests
 cffi==1.16.0
     # via cryptography
 charset-normalizer==3.3.2
@@ -18,6 +21,10 @@ cx-oracle==8.3.0
     # via sat-utils (pyproject.toml)
 dnspython==2.6.1
     # via email-validator
+elastic-transport==8.15.1
+    # via elasticsearch
+elasticsearch==8.15.1
+    # via sat-utils (pyproject.toml)
 email-validator==2.1.1
     # via pydantic
 idna==3.6
@@ -49,4 +56,6 @@ typing-extensions==4.10.0
     #   pydantic
     #   pydantic-core
 urllib3==2.2.1
-    # via requests
+    # via
+    #   elastic-transport
+    #   requests
