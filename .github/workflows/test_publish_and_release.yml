@@ -63,7 +63,7 @@ jobs:
           pytest
 
       - name: Send Failure Message on Slack if Tests Fail
-        if: ${{ failure() }}
+        if: ${{ failure() && github.event.pull_request.draft == false }}
         uses: ./actions/slack-updates
         with:
           channel-id: ${{ github.event.inputs.slack-channel-id || env.SLACK_CHANNEL_ID }}
@@ -73,6 +73,7 @@ jobs:
           SLACK_UPDATES: ${{ github.event.inputs.slack-updates || env.SLACK_UPDATES }}
 
       - name: Send Success Message on Slack
+        if: ${{ github.event.pull_request.draft == false }}
         uses: ./actions/slack-updates
         with:
           channel-id: ${{ github.event.inputs.slack-channel-id || env.SLACK_CHANNEL_ID }}
