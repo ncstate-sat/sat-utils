@@ -28,17 +28,17 @@ class SATLogger:
                 handler.setFormatter(self.formatter)
             self.logger.addHandler(handler)
 
-    def debug(self, msg: str) -> None:
-        self.logger.debug(msg)
+    def debug(self, msg: str, *args, **kwargs) -> None:
+        self.logger.debug(msg, *args, **kwargs)
 
-    def info(self, msg: str) -> None:
-        self.logger.info(msg)
+    def info(self, msg: str, *args, **kwargs) -> None:
+        self.logger.info(msg, *args, **kwargs)
 
-    def warning(self, msg: str) -> None:
-        self.logger.warning(msg)
+    def warning(self, msg: str, *args, **kwargs) -> None:
+        self.logger.warning(msg, *args, **kwargs)
 
-    def error(self, msg: str) -> None:
-        self.logger.error(msg)
+    def error(self, msg: str, *args, **kwargs) -> None:
+        self.logger.error(msg, *args, **kwargs)
 
-    def critical(self, msg: str) -> None:
-        self.logger.critical(msg)
+    def critical(self, msg: str, *args, **kwargs) -> None:
+        self.logger.critical(msg, args, kwargs)
