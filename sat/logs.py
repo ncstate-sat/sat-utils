@@ -9,7 +9,7 @@ class SATLogger:
             self.logger.setLevel(logging.DEBUG)
         else:
             self.logger.setLevel(level)
-        self.formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        self.formatter = ExtraTextFormatter()
         self.handler = logging.StreamHandler()
         self.handler.setFormatter(self.formatter)
         self.logger.addHandler(self.handler)
@@ -42,3 +42,40 @@ class SATLogger:
 
     def critical(self, msg: str, *args, **kwargs) -> None:
         self.logger.critical(msg, args, kwargs)
+
+
+class ExtraTextFormatter(logging.Formatter):
+    """
+    Modifies the log format used based on the presence of extra variables in the log message
+
+    Some log messages contain additional data to help track processes across multiple services.
+    If a normal static formatter were used, then log messages without these extra args
+    would contain blank formatting for those parameters,
+    making the logs more difficult to read.
+
+    The format method here dynamically builds out a text formatted addition to the log line,
+    only including keys that were provided in the extra argument for the logger call.
+    The appended output will look like
+    ```
+    asctime module.name This is the log message cid=8675309 first_name=Tommy last_name=TwoTone
+    ```
+    """
+
+    def format(self, record):
+        log_format = "%(asctime)s %(name)s %(message)s "
+
+        # Convert attribute style extra args on the log record into optional values in a dictionary
+        existing_extra_args = dict()
+        extra_to_check = ["cid", "first_name", "last_name"]
+        for extra_arg in extra_to_check:
+            try:
+                existing_extra_args[extra_arg] = getattr(record, extra_arg)
+            except AttributeError:
+                pass
+
+        if existing_extra_args:
+            # Iterate through extra args and add argument name and value template to output format
+            for existing_extra in existing_extra_args.keys():
+                log_format += f"{existing_extra}=%({existing_extra})s "
+
+        return logging.Formatter(fmt=log_format).format(record)

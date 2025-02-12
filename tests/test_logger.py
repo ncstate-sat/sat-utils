@@ -1,6 +1,9 @@
 import logging
 import os
+from io import StringIO
 from unittest import mock
+
+from sat.logs import ExtraTextFormatter
 
 TMP_FILE = "/tmp/test.log"
 
@@ -38,3 +41,36 @@ def test_add_handlers(caplog):
     logger.info("Test message")
     assert "Test message" in caplog.text
     assert os.path.exists(TMP_FILE)
+
+
+def test_extra_formatter():
+    test_stream = StringIO()
+    handler = logging.StreamHandler(test_stream)
+    formatter = ExtraTextFormatter()
+    handler.setFormatter(formatter)
+    logger = logging.getLogger(__name__)
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    logger.info("test", extra={"cid": "test"})
+    test_stream.seek(0)
+    log_line = test_stream.read()
+    assert "cid=test" in log_line
+
+
+def test_all_args_extra_formatter():
+    test_stream = StringIO()
+    handler = logging.StreamHandler(test_stream)
+    formatter = ExtraTextFormatter()
+    handler.setFormatter(formatter)
+    logger = logging.getLogger(__name__)
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    logger.info(
+        "test",
+        extra={"cid": "test", "first_name": "test-first-name", "last_name": "test-last-name"},
+    )
+    test_stream.seek(0)
+    log_line = test_stream.read()
+    assert "cid=test" in log_line
+    assert "first_name=test-first-name" in log_line
+    assert "last_name=test-last-name" in log_line
