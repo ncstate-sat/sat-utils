@@ -44,6 +44,37 @@ class SATLogger:
         self.logger.critical(msg, args, kwargs)
 
 
+class DjangoSATLogger:
+    """
+    Just a wrapper class around the default logger
+
+    This exists just to keep the client side implementation of logging similar between the
+    django/celery applications and the other python services in our stack.
+
+    The default SATLogger implementation doesn't play nicely with UWSGI/Django/Celery altogether;
+    Django manages logging configuration through it's built in settings module.
+    The desired extra-argument formatter should be passed to
+    """
+
+    def __init__(self, name: str = __name__, level: int = logging.INFO) -> None:
+        self.logger = logging.getLogger(name)
+
+    def debug(self, msg: str, *args, **kwargs) -> None:
+        self.logger.debug(msg, *args, **kwargs)
+
+    def info(self, msg: str, *args, **kwargs) -> None:
+        self.logger.info(msg, *args, **kwargs)
+
+    def warning(self, msg: str, *args, **kwargs) -> None:
+        self.logger.warning(msg, *args, **kwargs)
+
+    def error(self, msg: str, *args, **kwargs) -> None:
+        self.logger.error(msg, *args, **kwargs)
+
+    def critical(self, msg: str, *args, **kwargs) -> None:
+        self.logger.critical(msg, args, kwargs)
+
+
 class ExtraTextFormatter(logging.Formatter):
     """
     Modifies the log format used based on the presence of extra variables in the log message

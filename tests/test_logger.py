@@ -43,6 +43,15 @@ def test_add_handlers(caplog):
     assert os.path.exists(TMP_FILE)
 
 
+def test_django_logger(caplog):
+    from sat.logs import DjangoSATLogger
+
+    logger = DjangoSATLogger()
+    logger.logger.setLevel(logging.INFO)
+    logger.info("Test info")
+    assert "Test info" in caplog.text
+
+
 def test_extra_formatter():
     test_stream = StringIO()
     handler = logging.StreamHandler(test_stream)
