@@ -93,7 +93,7 @@ class ExtraTextFormatter(logging.Formatter):
     """
 
     def format(self, record):
-        log_format = "%(asctime)s %(name)s %(message)s "
+        log_format = "%(asctime)s %(levelname)s %(name)s %(message)s "
 
         # Convert attribute style extra args on the log record into optional values in a dictionary
         existing_extra_args = dict()
