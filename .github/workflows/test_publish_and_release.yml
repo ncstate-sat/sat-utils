@@ -11,7 +11,7 @@ on:
 env:
   REPO_NAME: sat-utils
   SLACK_UPDATES: true
-  SLACK_CHANNEL_ID: C05Q5KLUW6Q
+  SLACK_CHANNEL_ID: ${{ secrets.SATUTILS_CHANNEL_ID }}
   RELEASE_REPO: https://github.com/ncstate-sat/sat-utils/
   FLIT_USERNAME: __token__
   FLIT_PASSWORD: ${{ secrets.PYPI_TOKEN }}
