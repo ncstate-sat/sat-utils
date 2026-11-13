@@ -1,10 +1,10 @@
 from unittest.mock import patch
 
 import pytest
-from cx_Oracle import DatabaseError
+from oracledb import DatabaseError
 from pyodbc import InterfaceError
+from sat.db import CX_ORACLE_UNAVAILABLE_MESSAGE, SatDBException, get_db_connection
 from sat.db import ConnectionType as ctype
-from sat.db import SatDBException, get_db_connection
 
 
 def test_pyodbc_errors():
@@ -25,6 +25,13 @@ def test_cx_oracle_error():
             get_db_connection(ctype.CX_ORACLE, conn_string=conn_string)
     assert "DatabaseError" in str(ex.value)
     assert "Thrown database error." in str(ex.value)
+
+
+def test_cx_oracle_unavailable():
+    with patch("sat.db.cx_Oracle", None):
+        with pytest.raises(SatDBException) as ex:
+            get_db_connection(ctype.CX_ORACLE, conn_string="Test Connection String")
+    assert str(ex.value) == CX_ORACLE_UNAVAILABLE_MESSAGE
 
 
 def test_py_oracle_error():
