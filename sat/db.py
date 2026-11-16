@@ -1,8 +1,18 @@
 from enum import Enum
 
-import cx_Oracle
 import oracledb
 import pyodbc
+
+# cx_Oracle has no builds for Python 3.11+, so it is only installed on older Pythons.
+try:
+    import cx_Oracle
+except ImportError:
+    cx_Oracle = None
+
+CX_ORACLE_UNAVAILABLE_MESSAGE = (
+    "ConnectionType.CX_ORACLE requires cx_Oracle, which is only available on Python 3.10 and "
+    "older. Use ConnectionType.PY_ORACLE instead."
+)
 
 
 class SatDBException(BaseException):
@@ -34,6 +44,8 @@ def get_db_connection(conn_type: ConnectionType, **kwargs):
     ------
     SatDBException
     """
+    if conn_type == ConnectionType.CX_ORACLE and cx_Oracle is None:
+        raise SatDBException(CX_ORACLE_UNAVAILABLE_MESSAGE)
     try:
         if conn_type == ConnectionType.SQL:
             return pyodbc.connect(kwargs.get("conn_string"))
